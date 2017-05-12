@@ -4,13 +4,40 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>Test Often and Prosper</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- OPI style -->
+		<link rel="stylesheet" href="lib/css/object-partners-revealjs-theme.css">
+        <style>
+
+            .reveal pre {
+                line-height: 1.15em;
+            }
+
+            .reveal pre code {
+                max-height: inherit;
+            }
+
+            .reveal pre.groovy code {
+                font-size: large;
+            }
+
+            img.singleImage {
+                height: 400px;
+            }
+
+            img.fullImage {
+                height: 500px;
+            }
+
+            #spock-junit-feature-table p { font-size: 0.55em; margin: 2px 0; padding:0px; }
+
+        </style>
 
 		<!-- Printing and PDF exports -->
 		<script>
@@ -22,12 +49,614 @@
 		</script>
 	</head>
 	<body>
+	<div class="theme-font-montserrat theme-color-white-blue" style="width: 100%; height: 100%;">
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section data-state="title">
+                    <h2>Test Often and Prosper
+                    </h2>
+                    <p>A Java developer's guide to Spock</p>
+				</section>
+                <section>
+                    <h3>WARNING: We will Mock Spock</h3>
+                    <div style="display: flex; justify-content: center; ">
+                        <div style="flex: 1;">
+                            <img src="lib/img/spock-spork.jpg" height="400px">
+                        </div>
+                        <div style="flex: 1;">
+                            <img src="lib/img/spock-the-rock-johnson.jpg" height="400px">
+                        </div>
+                    </div>
+                </section>
+				<section>
+                    <h3>The new frontier</h3>
+                    <p class="fragment grow fade-up current-visible">
+                        We now have stakeholders asking for testing metrics<br/>and faster deployment of features
+                    </p>
+                    <p class="fragment grow fade-up current-visible">
+                        <B>Headline</B>
+                        <span><br/>How ___ deploys to production ___ times a <em>day</em></span>
+                    </p>
+                    <p class="fragment grow fade-up current-visible">Testing now takes less code and less time.</p>
+				</section>
+                <section>
+                    <h3>Testing will make you a rockstar</h3>
+                    <img src="lib/img/spock-the-rockstar.jpg" class="singleImage">
+                </section>
+                <section>
+                    <h3>Rockstars prosper</h3>
+                    <img src="lib/img/spock-canadian-money-prosper.jpg" class="singleImage">
+                </section>
+				<section>
+                    <h3>Why not just use JUnit?</h3>
+                    <img src="lib/img/spock-kirk-amok-time-fight.png"  class="singleImage"/>
+				</section>
+                <section>
+                    <h3>You could ...</h3>
+                    <img src="lib/img/Spock-and-Groovy-together.png" height="186px"/>
+                    <h3 class="fragment fade-up">You could even...</h3>
+                </section>
+                <section>
+                    <pre class="groovy" ><code data-trim>
+class CrewRecruiterServiceSpockMockitoTest extends Specification implements CommonCrew {
+    //Inject Mockito mocks into your Spock tests 😱
+    @InjectMocks CrewRecruiterService crewRecruiterService
+
+    @Mock PayrollService payrollService
+
+    def setup() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    void "SelectForBudget can be tested with Mockito mocks"() {
+        Mockito.when(payrollService.getSalary(any(CrewMember))).thenReturn(100000L)
+
+        when:
+        List crew = crewRecruiterService.selectForBudget(200000, ENTIRE_CREW)
+
+        then:
+        crew == [KIRK, SPOCK]
+    }
+}
+                    </code></pre>
+                </section>
+                <section>
+                    <img src="lib/img/spock-silly-humans.jpg" class="fullImage"/>
+                </section>
+                <section>
+                    <h3>Why Spock kicks butt...</h3>
+                    <img src="lib/img/spock_amok_time_bounce.gif" class="singleImage"/>
+                </section>
+                <section>
+                    <h6>Easy mocking. Easy verifications.</h6>
+                    <pre class="groovy"><code data-trim style="font-size: .85em">
+def "set course test"() {
+    when:
+    Route results = navigationSystem.setCourse("Andoria")
+
+    then:
+    1 * collisionAvoidanceSystems.findRoute("Earth", "Andoria") >> {
+        new Route(["Hang a left at Mars",
+                   "Turn right at Alpha Centauri A",
+                   "Gravity assist from Midos V"])
+    }
+    results.directions.first() == "Hang a left at Mars"
+}
+                    </code></pre>
+                </section>
+				<section>
+                    <h6>Parameterized tests</h6>
+                    <pre class="groovy"><code data-trim >
+@Unroll("A budget of #salaryCap pays for #expectedCrew")
+void "SelectForBudget adds crew in priority order until budget depleted"() {
+
+    when: 'selecting crew at various salary cap levels'
+    def crew = crewRecruiterService.selectForBudget(salaryCap, ENTIRE_CREW)
+
+    then: 'we get back crew we can afford in priority order'
+    crew == expectedCrew
+
+    where:
+    salaryCap   || expectedCrew
+    0           || []
+    100000      || [KIRK]
+    299999      || [KIRK, SPOCK]
+    MAX_VALUE   || ENTIRE_CREW
+}
+                    </code></pre>
+                </section>
+                <section>
+                    <h6>Spock is Groovy</h6>
+
+                    <div style="display: flex; justify-content: center; width: 100%;">
+                        <div style="flex: 1;">
+                            <img src="lib/img/groovy-spock-neck-scarf.jpg"   style="position:relative; left:-75px;">
+                        </div>
+                        <div style="flex: 1">
+                            <pre class="groovy" style="margin-right: 0; width: 120%;position:relative; left:-50px;" ><code data-trim >
+1 * mockService.findOfficers(crewMembers) >> {
+        List crewMembers ->
+        crewMembers.findResults {
+            it.rank?.commandLevel < 5
+        }
+    }
+
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <img src="lib/img/spock-data-awesome.jpg" class="fullImage">
+                    <div></div>
+                </section>
+                <section>
+                    <div style="display: flex; justify-content: center; width: 100%; align-items: flex-end">
+
+                        <div style="flex: 1;position:relative; left:-50px;">
+                            <h6>This is Groovy</h6>
+                            <img src="lib/img/I-am-not-spock-cover.jpg">
+                        </div>
+                        <div style="flex: 4">
+                            <pre class="groovy" style="margin-right: 0; width: 98%;"><code data-trim >
+def KIRK = new CrewMember(firstName: "James", lastName: "Kirk")
+
+Range oneToTen = (1..10) // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+def crewNames = ["Kirk", "Spock", "Ensign Redshirt"]
+
+List crew = crewNames.collect { String lastName ->
+    long yos = getRandomFromRange(oneToTen) //oneToTen in scope
+    new CrewMember(lastName: lastName, yearsOfService: yos)
+}
+
+// IT, " vs ', interpolation of strings, elvis, null-safe
+crew.each { println "${it.firstName?:''} $it.lastName - $it.rank?.salary" }
+
+assert KIRK != SPOCK  // == is .equals, === for references
+                            </code></pre>
+                        </div>
+                    </div>
+                    <p style="font-size: small"><a href="http://groovy-lang.org/differences.html" target="_blank">
+                        http://groovy-lang.org/differences.html</a><br/><br/>
+                        <a href="http://groovy-lang.org/syntax.html" target="_blank">
+                            http://groovy-lang.org/syntax.html</a>
+                    </p>
+
+                </section>
+
+                <section>
+                    <div style="display: flex; justify-content: center; width: 100%; align-items: flex-start; position: relative; top: 20px;">
+                        <div style="flex: 4">
+                            <pre class="groovy" style="margin-top: 15px; left:-50px; margin-right: 0; width: 98%;"><code data-trim >
+@Subject Starship starship = new Starship()
+@Collaborator PayrollService payrollService = Mock()
+@Shared def CREW = ["Kirk", "Spock", "Ensign Redshirt"].asImmutable()
+@Collaborator def crewManager = Spy(CrewManager, constructorArgs: [CREW])
+
+def "A very descriptive name for our test"() {
+    def currentCrew = ['RebelSpy'] + CREW  /* given: */
+
+    expect:
+    currentCrew.size() == 4
+
+    when:
+    def result = starship.findIntruders()
+
+    then:
+    (1..4) * payrollService.getSalary(_) //default returns falsey
+    1 * crewManager.getExpectedCrew(starship) //concrete call
+    (1.._) * crewManager.isSpy(starship, _ as CrewMember) >> { ship, cm ->
+        return ship.name == 'Enterprise' && cm.lastName.contains('Spy')
+    }
+    result.lastName == 'RebelSpy'
+}
+                            </code></pre>
+                        </div>
+                        <div style="flex: 1;">
+                            <img src="lib/img/i-am-spock-full-cover.jpg" style="position:relative; ">
+                            <h6>This is Spock</h6>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Man that's Groovy</h3>
+                    <img src="lib/img/leonard-nimoy-spock-singing-bilbo-with-groovy-teens.gif" class="singleImage">
+                </section>
+
+                <section>
+                    <h3>Spock Deep Dive</h3>
+                    <img src="lib/img/Kirk_and_Spock_swimming.jpg" class="singleImage">
+                </section>
+
+                <section>
+                    <h6>Basic structure</h6>
+                    <pre class="groovy"><code data-trim >
+class MyFirstSpockSpec extends Specification {
+
+  StringUtil stringUtil = new StringUtil()
+
+  // optional setup / teardown methods
+  def setup() {}       // run before every feature method
+  def cleanup() {}     // run after every feature method
+  def setupSpec() {}   // run before the first feature method
+  def cleanupSpec() {} // run after the last feature method
+
+  void testContains() {
+    expect:
+    stringUtil.contains("Spock", "S")
+  }
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Spec fixture setup</h6>
+                    <pre class="groovy" style="font-size: 0.65em"><code data-trim >
+class SetupMethodsAreNotNeededSpec extends MyBaseSpecification {
+
+  StringUtil stringUtilOne = new StringUtil()
+  StringUtil stringUtilTwo
+
+  @Shared NumberUtil numberUtilOne = new NumberUtil()
+  @Shared NumberUtil numberUtilTwo
+
+  def setup() {
+    //super.setup()  //calling super for Fixture methods isn't needed
+    stringUtilTwo = new StringUtil()
+  }
+
+  def setupSpec() {
+    numberUtilTwo = new NumberUtil()  //instance fields must be @Shared
+  }
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                <h6>Feature method structure</h6>
+                <pre class="groovy" style="font-size: 0.60em"><code data-trim >
+void testSpockIsCool() {
+  // The setup: or given: labels are optional
+  def crew = [KIRK, SPOCK, SCOTTY]
+
+  expect: "the obvious answer from a fanboy"
+  SPOCK == fanboy.whoIsTheCoolest(crew)
+
+  when: "Spock isn't an option"
+  fanFav = fanboy.whoIsTheCoolest([KIRK, SCOTTY])
+
+  then: "Kung Fu is cool"
+  fanFav == KIRK
+
+  and: "for visual separation"
+  fanFav.name.contains('James')
+
+  cleanup: "optional clean up"
+  SPOCK.mindMeld(fanboy)
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6 style="text-transform:inherit">testVulcanFindFunny() { ... }</h6>
+                    <img src="lib/img/trek-kirk-spock-mad-magazine.jpg" class="singleImage">
+                    <h6 style="text-transform:inherit">"Vulcans do not get mad magazine"() { ... }</h6>
+                </section>
+
+
+                <section>
+                    <h6>Assertions</h6>
+                    <pre class="groovy" ><code data-trim >
+void "expect assertions to be truthy"() {
+  expect:
+  SPOCK.fullName == "S'chn T'gai Spock"
+  SPOCK.isCool() && ! SPOCK.isFunny()
+  SPOCK.rank > 0
+  SPOCK.rank
+
+  when:
+  SPOCK.tellJoke()
+
+  then:
+  thrown(IllogicalRequestException)
+
+  when:
+  SPOCK.writeTests()
+
+  then:
+  notThrown(IllogicalRequestException)
+  noExceptionThrown()  // Rarely used
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Grouping assertions by subject</h6>
+                    <pre class="groovy" ><code data-trim >
+void "Registering a crew member is done completely"() {
+    when:
+    def crewMember = ship.getCrewMemberById(1)
+
+    then:
+    with(crewMember) {
+        firstName == 'James'
+        lastName  == 'Kirk'
+        rank.title == 'Captain'
+    }
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Assertions in Helpers</h6>
+                    <pre class="groovy" ><code data-trim >
+void "getCrew returns the expected size of valid crew members"() {
+  when:
+  def crew = ship.getCrew()
+
+  then:
+  crew.size() == 12
+  crew.each { isValidCrewMember(it) }
+
+  // This would not tell you _which_ crewMember failed the assertion
+  // crew.every { crewMember.fullName?:'' != '' }
+}
+
+void isValidCrewMember(crewMember) {
+    assert crewMember.fullName?:'' != ''
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Failures</h6>
+                    <pre class="groovy" style="width: 110%; left:-50px" ><code data-trim style="color: palevioletred" >
+Condition not satisfied:
+
+crew.collect { it.fullName }.join(';') == [KIRK, RED_SHIRT].collect { it.fullName }.join(';')
+|    |                       |         |   |     |          |                       |
+|    [James Kirk]            James Kirk|   Kirk  Doe        [James Kirk, John Doe]  James Kirk;John Doe
+[Kirk]                                 false
+                                       9 differences (52% similarity)
+                                       James Kirk(---------)
+                                       James Kirk(;John Doe)
+
+at com.objectpartners.eskens.spock.services.CrewRecruiterServiceSpockTest.
+                        Crew has a red shirt(CrewRecruiterServiceSpockTest.groovy:76)
+
+com.objectpartners.eskens.spock.services.CrewRecruiterServiceSpockTest > Crew has a red shirt FAILED
+    org.spockframework.runtime.SpockComparisonFailure at CrewRecruiterServiceSpockTest.groovy:76
+1 test completed, 1 failed
+:test FAILED
+                    </code></pre>
+
+
+                </section>
+                <section>
+                    <h3>Parameterized tests IN DEPTH</h3>
+                    <img src="lib/img/spock-kirk-comic-blackhole.jpg" class="singleImage"/>
+                </section>
+
+                <section>
+                    <h6>A simple parameterized test example</h6>
+                    <pre class="groovy"><code data-trim >
+@Unroll("A budget of #salaryCap pays for #expectedCrew")
+void "SelectForBudget adds crew in priority order until budget depleted"() {
+
+    given: 'a flat rate of 100000 per member'
+    payrollService.getSalary(_) &gt;&gt; 100000
+
+    when: 'selecting crew at various salary cap levels'
+    def crew = crewRecruiterService.selectForBudget(salaryCap, ENTIRE_CREW)
+
+    then: 'we get back crew we can afford in priority order'
+    crew == expectedCrew
+
+    where:
+    salaryCap   || expectedCrew
+    0           || []
+    100000      || [KIRK]
+    299999      || [KIRK, SPOCK]
+    MAX_VALUE   || ENTIRE_CREW
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Iterables as params</h6>
+
+                    <div style="display: flex; justify-content: center; width: 100%;">
+                        <div style="flex: 1;">
+                            <img src="lib/img/spock-2-plus-2.jpg"   style="position:relative; left:-75px;">
+                        </div>
+                        <div style="flex: 1">
+                            <pre class="groovy" style="margin-right: 0; width: 120%;position:relative; left:-50px;" ><code data-trim >
+def "spock can maths"() {
+  expect:
+  [a,b].sum(0) == c
+
+  where:
+  a << [2, 3, 4]
+  b << (2..6).step(2)
+  c << "4,7,10".split(',')
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h6>Spock Modules & Extensions</h6>
+                    <img src="lib/img/simpsons-i-am-not-spock-i-am-spock.gif" class="singleImage">
+                </section>
+                <section>
+                    <h6>Spring Module</h6>
+                    <p>Provides Spring integration so beans can be injected into integration specs</p>
+                    <h6>Write your own extension</h6>
+                    <p>Or borrow ones like the great subject/collaborator extension</p>
+                </section>
+
+                <section>
+                    <h6>Some existing extensions</h6>
+                    <pre class="groovy"><code data-trim >
+
+@Timeout(5) //defaults to secs, or (value = 5, unit = MILLISECONDS)
+@Use(DiscoMixin)
+@Issue('BUG-1701')
+void "is Spock"() {
+    expect: SPOCK.dance() == "Doin' the Hustle"
+}
+
+
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Conditional Testing</h6>
+                    <pre class="groovy"><code>
+@Ignore("Optional description")
+
+@IgnoreRest //Only run tests annotated w/ this
+
+@IgnoreIf({ System.getProperty("os.name").contains("borg") })
+
+@Requires({ os.holodeck })
+
+@PendingFeature
+def "Failing tests marked as skipped"() { expect: false }
+
+@PendingFeature  // Failing Test!  No longer pending :-)
+def "marks data driven feature where all iterations pass as _failed!_"() {
+    expect: test
+    where: test << [true, true, true]
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Testing a Testing Framework</h6>
+                    <pre class="groovy"><code data-trim >
+def "@PendingFeature marks data driven feature where all iterations pass as failed"() {
+  when:
+    runner.runWithImports("""
+      class Foo extends Specification {
+        @PendingFeature
+        def bar() {
+          expect: test
+          where:
+            test << [true, true, true]
+        }
+       }
+    """)
+  then:
+    AssertionError e = thrown(AssertionError)
+    e.message == "Feature is marked with @PendingFeature but passes unexpectedly"
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3>That's gangster</h3>
+                    <img src="lib/img/gangsta-spock.jpg"  class="singleImage"/>
+                </section>
+
+
+                <section>
+                    <h3>Thank You</h3>
+                    <img src="lib/img/spock-may-the-force-be-with-you.jpg" class="singleImage">
+                </section>
+
+
+                <!---
+                <section>
+                    <table id="spock-junit-feature-table">
+                        <colgroup>
+                            <col style="width: 50%;">
+                            <col style="width: 50%;">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th class="tableblock halign-left valign-top">Spock</th>
+                            <th class="tableblock halign-left valign-top">JUnit</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="tableblock halign-left valign-top"><p>Specification</p></td>
+                            <td class="tableblock halign-left valign-top"><p>Test class</p></td>
+                        </tr>
+                        <tr>
+                            <td class="tableblock halign-left valign-top"><p><code>setup()</code></p></td>
+                            <td class="tableblock halign-left valign-top"><p><code>@Before</code></p></td>
+                        </tr>
+                        <tr>
+                            <td class="tableblock halign-left valign-top"><p><code>cleanup()</code></p></td>
+                            <td class="tableblock halign-left valign-top"><p><code>@After</code></p></td>
+                        </tr>
+                        <tr>
+                            <td class="tableblock halign-left valign-top"><p><code>setupSpec()</code></p></td>
+                            <td class="tableblock halign-left valign-top"><p><code>@BeforeClass</code></p></td>
+                        </tr>
+                        <tr>
+                            <td class="tableblock halign-left valign-top"><p><code>cleanupSpec()</code></p></td>
+                            <td class="tableblock halign-left valign-top"><p><code>@AfterClass</code></p></td>
+                        </tr>
+                        <tr>
+                            <td class="tableblock halign-left valign-top"><p>Feature</p></td>
+                            <td class="tableblock halign-left valign-top"><p>Test</p></td>
+                        </tr>
+                        <tr>
+                            <td class="tableblock halign-left valign-top"><p>Feature method</p></td>
+                            <td class="tableblock halign-left valign-top"><p>Test method</p></td>
+                        </tr>
+                        <tr>
+                            <td class="tableblock halign-left valign-top"><p>Data-driven feature</p></td>
+                            <td class="tableblock halign-left valign-top"><p>Theory</p></td>
+                        </tr>
+                        <tr>
+                            <td class="tableblock halign-left valign-top"><p>Condition</p></td>
+                            <td class="tableblock halign-left valign-top"><p>Assertion</p></td>
+                        </tr>
+                        <tr>
+                            <td class="tableblock halign-left valign-top"><p>Exception condition</p></td>
+                            <td class="tableblock halign-left valign-top"><p><code>@Test(expected=…​)</code></p></td>
+                        </tr>
+                        <tr>
+                            <td class="tableblock halign-left valign-top"><p>Interaction</p></td>
+                            <td class="tableblock halign-left valign-top"><p>Mock expectation (e.g. in Mockito)</p></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                --->
+
+                <!---
+                <section>
+                    <h2>Pretty Code</h2>
+                    <pre><code data-trim contenteditable>
+function linkify( selector ) {
+  if( supports3DTransforms ) {
+
+    var nodes = document.querySelectorAll( selector );
+
+    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
+      var node = nodes[i];
+
+      if( !node.className ) {
+        node.className += ' roll';
+      }
+    }
+  }
+}
+					</code></pre>
+                    <p>Code syntax highlighting courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
+                </section>
+                --->
 			</div>
 		</div>
+	</div>
 
 		<script src="lib/js/head.min.js"></script>
 		<script src="js/reveal.js"></script>
@@ -36,7 +665,7 @@
 			// More info https://github.com/hakimel/reveal.js#configuration
 			Reveal.initialize({
 				history: true,
-
+                //center: false,
 				// More info https://github.com/hakimel/reveal.js#dependencies
 				dependencies: [
 					{ src: 'plugin/markdown/marked.js' },
