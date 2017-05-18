@@ -68,8 +68,37 @@
                         </div>
                     </div>
                 </section>
+                <section>
+                    <h3>Me</h3>
+                    <div>
+                        <p>Derek Eskens</p>
+                        <p>@snekse</p>
+                    </div>
+                    <div class="fragment">
+                        <p>Dev 15+ years, OPI ~3 years</p>
+                        <p>Java, JS, Groovy</p>
+                    </div>
+
+                    <p class="fragment">Star Wars > Star Trek</p>
+                    <p class="fragment">'Foodie for Life' is tattooed across my tummy</p>
+                </section>
+                <section>
+                    <h3>Object Partners, Inc.</h3>
+                    <ul>
+                        <li>Java, Groovy, JavaScript, Mobile, DevOps</li>
+                        <li>~100 Senior Consultants</li>
+                        <li>Omaha, Minneapolis</li>
+                        <li>Average Tenure Over 5 years</li>
+                        <li>Founded 1996</li>
+                    </ul>
+                </section>
 				<section>
                     <h3>The new frontier</h3>
+                    <div class="fragment fade-out" style="position: absolute; width:100%;">
+                        <img src="lib/img/star-trek-warp-speed-mr-scott-jason-politte.jpg" class="singleImage"
+                             style="display: block;margin-left: auto; margin-right: auto;">
+                    </div>
+
                     <p class="fragment grow fade-up current-visible">
                         We now have stakeholders asking for testing metrics<br/>and faster deployment of features
                     </p>
@@ -93,7 +122,7 @@
 				</section>
                 <section>
                     <h3>You could ...</h3>
-                    <img src="lib/img/Spock-and-Groovy-together.png" height="186px"/>
+                    <img src="lib/img/Spock-and-Groovy-together.png" height="250px"/>
                     <h3 class="fragment fade-up">You could even...</h3>
                 </section>
                 <section>
@@ -339,9 +368,14 @@ void testSpockIsCool() {
                 </section>
 
                 <section>
-                    <h6 style="text-transform:inherit">testVulcanFindFunny() { ... }</h6>
-                    <img src="lib/img/trek-kirk-spock-mad-magazine.jpg" class="singleImage">
-                    <h6 style="text-transform:inherit">"Vulcans do not get mad magazine"() { ... }</h6>
+                    <div style="position: relative; top: -30px;">
+                        <h3 style="transform: rotate(90deg);transform-origin: left bottom 0; opacity: 0.7; color: #999;
+                                          text-align: left;margin-left:80px;text-indent:120px;">Method Names</h3>
+                        <h6 style="text-transform:inherit">testVulcanFindFunny() { ... }</h6>
+                        <img src="lib/img/trek-kirk-spock-mad-magazine.jpg" class="singleImage">
+                        <h6 style="text-transform:inherit">"Vulcans do not get mad magazine"() { ... }</h6>
+                    </div>
+
                 </section>
 
 
@@ -464,6 +498,90 @@ void "SelectForBudget adds crew in priority order until budget depleted"() {
                 </section>
 
                 <section>
+                    <h6>Single input data tables</h6>
+                    <pre class="groovy"><code data-trim >
+@Unroll("Scotty, warp #warpSpeed")
+void "Engines don't blow up if we give it a bad command"() {
+
+    when: 'we tell the ship to warp at various level'
+    ship.controls.command('warp', warpSpeed)
+
+    then: 'It never explodes'
+    noExceptionThrown()
+
+    where:
+    warpSpeed   || _
+    null        || _
+    0           || _
+    1           || _
+    MAX_VALUE   || _
+    'Bajillion' || _
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Using Spec values</h6>
+                    <pre class="groovy"><code data-trim >
+@Shared CrewManager crewMgr = new CrewManagerTestingUtil()
+static final ENTERPRISE = "USS Enterprise - NCC-1701"
+
+@Unroll("A budget of #salaryCap pays for #expectedCrew")
+void "Using Shared and statics"() {
+    expect:
+    // ...
+
+    where:
+    crewMember              || expectedShip
+    crewMgr.get('Spock')    || ENTERPRISE
+    crewMgr.get('Kirk')     || ENTERPRISE
+    crewMgr.get('Data')     || 'USS Enterprise - NCC-1701-C'
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Reference Left Cells</h6>
+                    <pre class="groovy"><code data-trim >
+given: 'an initial speed'
+ship.controls.command('warp', start)
+assert getCurrentWarpSpeed() == start
+
+when:
+ship.controls.command("${multiplier} our velocity")
+
+then:
+getCurrentWarpSpeed() == finalSpeed
+
+where: 'we reference our start value to calculate the final value'
+start | multiplier  || finalSpeed
+1     | 'Double'    || start * 2
+4     | 'Triple'    || start * 3
+7     | 'Quadruple' || 12   //Max warp factor is 12
+
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Extract Common Calculations</h6>
+                    <pre class="groovy"><code data-trim >
+expect: 'an initial speed'
+sendCommand('warp', start)
+
+expect:
+sendCommand("${command} our velocity").getCurrentWarpSpeed() == finalSpeed
+
+where: 'we reference our start value to calculate the final value'
+start | command     | multiplier
+1     | 'Double'    | 2
+7     | 'Quadruple' | 4
+
+finalSpeed = [(start * multiplier), 2].max() //Max warp factor is 12
+
+                    </code></pre>
+                </section>
+
+                <section>
                     <h6>Iterables as params</h6>
 
                     <div style="display: flex; justify-content: center; width: 100%;">
@@ -482,8 +600,315 @@ def "spock can maths"() {
   c << "4,7,10".split(',')
 }
                             </code></pre>
+                            <pre class="groovy" style="margin-right: 0; width: 120%;position:relative; left:-50px;" ><code data-trim >
+  where:
+  [lastName, rank, yos] << excel.get(1, ['B','C','J'])
+                            </code></pre>
                         </div>
                     </div>
+                </section>
+
+                <section>
+                    <h6>Closure params!</h6>
+                    <pre class="groovy"><code data-trim >
+when:
+command.call(start)
+
+then:
+getCurrentWarpSpeed() == finalSpeed
+
+where: 'fun with closures'
+maxAwareCaptain = { speed ->
+    KIRK.say( (speed > 12) ? "Sulu, WHAT ARE YOU DOING! Slow Down!"
+                           : "Steady as she goes, Mr Sulu" )
+}
+
+start | command                                    | finalSpeed
+1     | { ship.command('warp 2' }                  | 2
+6     | { KIRK.say('Warp factor one, Mr. Sulu.') } | 1
+12    | maxAwareCaptain                            | 12
+13    | maxAwareCaptain                            | 12
+
+                    </code></pre>
+                </section>
+
+                <section>
+                    <img src="lib/img/surprised-NOT-BAD-spock.jpg" class="fullImage">
+                </section>
+
+                <section>
+                    <h3></h3>
+                    <div style="display: flex; justify-content: center; width: 100%;">
+                        <div style="flex: 1;">
+                            <img src="lib/img/spock-cos-play.jpg"   style="position:relative; left:-75px;">
+                        </div>
+                        <div style="flex: 1; margin-top: auto; margin-bottom: auto">
+                            <h1>Mocks</h1>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h6>Defining Mocks and Spies</h6>
+                    <pre class="groovy" style="font-size: 0.9em"><code data-trim >
+BridgeInterface bridgeInterface = Mock()
+def foodReplicator = Mock(FoodReplicator)
+Beamer beamer = Mock(Beamer)
+
+PayrollService payrollService = Spy()
+def engineControl = Spy(EngineControl)
+def crewManager = Spy(CrewManager, constructorArgs: [CREW])
+
+CrewMember SPOCK = h2.getCrewMember( [ lastName: 'Spock' ])
+def spockSpy = Spy(SPOCK) //New feature!
+
+                    </code></pre>
+                </section>
+
+
+                <section>
+                    <h6>Injecting Mocks - Take your pick</h6>
+                    <pre class="groovy" ><code data-trim >
+Ship ship = new UssEnterprise()
+CrewManager crewManager = Mock()
+
+def setup() {
+    ship.crewManager = crewManager
+}
+                    </code></pre>
+
+                    <pre class="groovy" ><code data-trim >
+CrewManager crewManager = Mock()
+Ship ship = new UssEnterprise(crewManager: crewManager)
+                    </code></pre>
+
+                    <pre class="groovy" ><code data-trim >
+
+@Subject Ship ship = new UssEnterprise()
+@Collaborator CrewManager crewManager = Mock()
+
+// http://bit.ly/spock-subjects-collaborators-extension
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Defining Mock Calls</h6>
+
+                    <div style="display: flex; justify-content: center; width: 100%;">
+                        <div style="flex: 1;">
+                            <img src="lib/img/spock-sugar-smacks.jpg"   style="position:relative; left:-75px; height: 450px;">
+                        </div>
+                        <div style="flex: 1">
+                            <pre class="groovy" style="margin-right: 0; width: 120%;position:relative; left:-50px;" ><code  data-trim>
+
+when: 'a crew member asks for cereal'
+computer.command('I want some cereal')
+
+then: """
+        expect FoodReplicator called once
+        with a quantity param of 1
+        and cereal type of 'Sugar Smacks'
+      """
+1 * foodReplicator.make(1, 'Sugar Smacks')  /*
+|   |              |    |
+|   |              |    |
+|   |              |    argument constraints
+|   |              method constraint
+|   target constraint
+cardinality
+*/
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h6>Cardinality</h6>
+                    <pre class="groovy" ><code  style="font-size: 0.825em">
+/** Taken (almost) directly from the docs **/
+
+1 * computer.command("Lights")      // exactly one call
+0 * computer.command("Lights")      // zero calls
+(1..3) * computer.command("Lights") // between one and three calls (inclusive)
+(1.._) * computer.command("Lights") // at least one call
+(_..3) * computer.command("Lights") // at most three calls
+/*
+  ^^  Groovy Ranges at work
+*/
+
+_ * computer.command("Lights")      // any number of calls, including zero
+                                    // (rarely needed; see 'Strict Mocking')
+computer.command("Lights")          // cardinality is optional, same as: _ *
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Fancy Target & Method Constraints</h6>
+                    <pre class="groovy" ><code  style="font-size: 0.90em">
+_ * _.getStatus() // Match any getStatus() call for all mocks/spies
+
+_ * tribble._ // Match any method call on a tribble
+
+_ * targetingSystem./Fire.*/ // Match all firing requests via regex
+
+_ * _._  // Match any method call on any mock/spy
+
+(..) * .(*_) // Highly illogical
+
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Argument Constraints</h6>
+                    <pre class="groovy" style="width: 115%;margin-left: auto; margin-right: auto;left:-75px;"><code data-trim style="font-size: 0.85em" >
+/** Taken (almost) directly from the docs **/
+1 * computer.command("lights")     // an argument that is equal to the String "lights"
+1 * computer.command(!"lights")    // an argument that is unequal to the String "lights"
+1 * computer.command()             // the empty argument list (would never match in our example)
+1 * computer.command(_)            // any single argument (including null)
+1 * computer.command(*_)           // any argument list (including the empty argument list)
+1 * computer.command(!null)        // any non-null argument
+1 * computer.command(_ as String)  // any non-null argument that is-a String
+1 * computer.command({ it.length() > 3 }) // an argument that satisfies the given predicate
+                                          // (here: message length is greater than 3)
+
+1 * foodReplicator.make( {it > 0}, !null, _ )  // Multiple arguments
+
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Strict Mocking</h6>
+                    <p>Ensure only expected calls are executed</p>
+                    <pre class="groovy" ><code  style="font-size: 0.90em">
+then: 'expect to make a banana and fail if anything else is made'
+1 * foodReplicator.make(1, 'Banana')
+0 * foodReplicator.make(*_)
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Why are we doing this?</h6>
+                    <img src="lib/img/spock-kirk-do-not-do-it--i-am-going-to-do-it.jpg" class="singleImage">
+                </section>
+
+                <section>
+                    <h6>To test what happens if Kirk does the thing</h6>
+                    <pre class="groovy" style="width: 100%;"><code data-trim data-noescape style="font-size: 0.90em" >
+when: 'Kirk pushes the big red button'
+def response = <mark>bigRedButton.push()</mark>
+
+then: 'if the targeting system works'
+targetingSystem.fireAllTheWeapons() <mark>>></mark> new TargetingResponse()
+
+then: 'the response indicates targeting worked'
+response == "Targeting confirmed."
+
+when: 'Kirk pushes the big red button'
+response = <mark>bigRedButton.push()</mark>
+
+then: 'if the targeting system throws an error'
+targetingSystem.fireAllTheWeapons() <mark>>></mark> { throw new WeaponsMalfunction('') }
+
+then: 'the response confirms the targeting failed'
+response == "I'm sorry, Captain. I'm afraid I can't do that."
+
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Returning fixed values</h6>
+                    <pre class="groovy" style="width: 100%;"><code data-trim data-noescape style="font-size: 0.90em" >
+computer.request('What is 1 + 1') >> "2"
+computer.request('What is 1 + 2') >> "3"
+computer.request("Do the thing") >> "Okay" >> "No"
+computer.request("Tribble count") <mark>>>></mark> ["2", "3", "4", "Many"]
+                    </code></pre>
+                    <h6 style="padding-top: 5px;">Returning dynamic values</h6>
+                    <pre class="groovy" style="width: 100%;"><code data-trim data-noescape style="font-size: 0.90em" >
+foodReplicator.make(*_) >> {args -> "Food: $args[1]; Qty: $args[0]" }
+foodReplicator.make(*_) >> {qty, food -> "Making $qty "+ pluralize(qty, food)}
+foodReplicator.make({it >> 0}, ) >> {qty, food ->
+    if (food == 'Cereal') {
+        return 'Sorry, we are out of sugar smacks'
+    }
+    return "Making $qty "+ pluralize(qty, food)
+}
+
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Spies for Hipsters</h6>
+                    <img src="lib/img/hipster-spock-stocking-hat.jpg" class="singleImage">
+                </section>
+
+                <section>
+                    <h6>Selective Mocking</h6>
+                    <pre class="groovy" ><code data-trim style="font-size: 0.98em" >
+def payrollService = Spy(PayrollService) {
+    // Mock the pay for every crew member the same amount
+    _ * getSalaryFor(_ as CrewMember) >> 50000
+}
+
+when:
+def remaining = accountingService.remainingBudget()
+
+then: """
+        We confirm we ask for getTotalCrewPayroll for our crew,
+        but let the impl do it's thing. When the impl calls
+        getSalaryFor, that's when our stubbing comes in
+      """
+1 * payrollService.getTotalCrewPayroll(CREW)
+remaining == 33482797
+
+                        </code></pre>
+                </section>
+
+                <section>
+                    <h6>Wrapping method calls</h6>
+                    <pre class="groovy" ><code data-trim style="font-size: 0.90em"  >
+def alienLibrary = Spy(AlienLibrary)
+
+when:
+def result = comms.sendBeacon('Hailing Borg Ship')
+
+then: "We call the actual implementation _after_ we mess with it"
+alienLibrary.receive(_) { msg ->
+    def alteredOutgoingMsg = filterNSFW(msg)
+    def alienResp = callRealMethodWithArgs(alteredOutgoingMsg)
+    return translateResponse(alienResp)
+}
+result == "Test Often and Prosper"
+
+                        </code></pre>
+                </section>
+                <section>
+                    <h2>Advanced Topics</h2>
+                </section>
+
+                <section>
+                    <h3>Groovy_</h3>
+                    <ul>
+                        <li>GroovyMock</li>
+                        <li>GroovyStub</li>
+                        <li>GroovySpy</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Used for mocking...</h3>
+                    <ul>
+                        <li>dynamic methods</li>
+                        <li>instances created<br/>outside your control</li>
+                        <li>constructors</li>
+                        <li>static methods</li>
+                    </ul>
+                </section>
+
+                <section>
+
+
                 </section>
 
                 <section>
