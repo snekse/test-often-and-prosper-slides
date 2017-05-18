@@ -122,26 +122,28 @@
 				</section>
                 <section>
                     <h3>You could ...</h3>
-                    <img src="lib/img/Spock-and-Groovy-together.png" height="250px"/>
+                    <img class="fragment fade-up" src="lib/img/Spock-and-Groovy-together.png" height="250px"/>
                     <h3 class="fragment fade-up">You could even...</h3>
                 </section>
                 <section>
-                    <pre class="groovy" ><code data-trim>
-class CrewRecruiterServiceSpockMockitoTest extends Specification implements CommonCrew {
+                    <pre class="groovy" style="margin-bottom: auto" ><code data-noescape style="font-size: 0.85em">
+class CrewRecruiterServiceSpockMockitoTest
+      extends Specification implements CommonCrew {
     //Inject Mockito mocks into your Spock tests 😱
     @InjectMocks CrewRecruiterService crewRecruiterService
 
     @Mock PayrollService payrollService
 
     def setup() {
-        MockitoAnnotations.initMocks(this);
+        <mark>MockitoAnnotations</mark>.initMocks(this);
     }
 
     void "SelectForBudget can be tested with Mockito mocks"() {
-        Mockito.when(payrollService.getSalary(any(CrewMember))).thenReturn(100000L)
+        Mockito.when(payrollService.getSalary(any(CrewMember)))
+               .thenReturn(100000L)
 
         when:
-        List crew = crewRecruiterService.selectForBudget(200000, ENTIRE_CREW)
+        List crew = crewRecruiterService.selectForBudget(200000, CREW)
 
         then:
         crew == [KIRK, SPOCK]
@@ -156,6 +158,69 @@ class CrewRecruiterServiceSpockMockitoTest extends Specification implements Comm
                     <h3>Why Spock kicks butt...</h3>
                     <img src="lib/img/spock_amok_time_bounce.gif" class="singleImage"/>
                 </section>
+                <section>
+                    <h6>JUnit Example</h6>
+                    <pre class="java" style="width: 110%; left:-50px" ><code data-trim data-noescape style="font-size: .85em">
+@Test
+public void selectForBudget() throws Exception {
+  when(payrollService.getSalary(KIRK)).thenReturn(100000L);
+  when(payrollService.getSalary(SPOCK)).thenReturn(100000L);
+
+  List&lt;CrewMember&gt; crew = crewRecruiterService.selectForBudget(200000L, ENTIRE_CREW);
+  Assert.assertEquals(new ArrayList<>(asList(KIRK, SPOCK)), crew);
+
+  //create inOrder object passing any mocks that need to be verified in order
+  InOrder inOrder = inOrder(payrollService);
+  inOrder.verify(payrollService).getSalary(argThat(arg -> arg == CommonCrew.KIRK));
+  inOrder.verify(payrollService).getSalary(argThat(arg -> arg == CommonCrew.SPOCK));
+  inOrder.verifyNoMoreInteractions();
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <img src="lib/img/spock-big-sigh.gif"  class="fullImage"/>
+                </section>
+
+                <section>
+                    <h6>Spock Example</h6>
+                    <pre class="groovy" style="width: 110%; left:-50px" ><code data-trim data-noescape style="font-size: .85em">
+void "SelectForBudget spends budget in crew priority order /
+      and avoids unnecessary calls to payroll service"() {
+
+    when: 'We have enough to pay for Kirk and Spock'
+    def crew = crewRecruiterService.selectForBudget(200000, ENTIRE_CREW)
+
+    then: 'We only make our expensive external system salary calls in the order we expect'
+    1 * payrollService.getSalary(KIRK) >> 100000  // first add Kirk
+
+    then: 'add Spock'
+    1 * payrollService.getSalary(SPOCK) >> 100000 // first add Spock
+
+    then: 'no more calls to that service since we have depleted our budget'
+    0 * payrollService.getSalary(_)
+
+    and: 'our crew consists of just Kirk and Spock'
+    crew == [KIRK, SPOCK]
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <img src="lib/img/spock-CHANGE-IS-ESSENTIAL-PROCESS.gif"  class="fullImage"/>
+                </section>
+
+                <section>
+                    <div style="display: flex; justify-content: center; width: 100%;">
+                        <div style="flex: 1;margin-top: auto; margin-bottom: auto">
+                            <h2>Spock Overview</h2>
+                        </div>
+                        <div style="flex: 1;">
+                            <img src="lib/img/Best_of_Spock_cover.jpg" class="fullImage" style="position:relative; left:-75px;">
+                        </div>
+                    </div>
+                </section>
+
                 <section>
                     <h6>Easy mocking. Easy verifications.</h6>
                     <pre class="groovy"><code data-trim style="font-size: .85em">
@@ -289,12 +354,12 @@ def "A very descriptive name for our test"() {
                 </section>
 
                 <section>
-                    <h3>Man that's Groovy</h3>
-                    <img src="lib/img/leonard-nimoy-spock-singing-bilbo-with-groovy-teens.gif" class="singleImage">
+                    <h4 style="margin-bottom: 10px">Man that's Groovy</h4>
+                    <img src="lib/img/leonard-nimoy-spock-singing-bilbo-with-groovy-teens.gif" class="fullImage">
                 </section>
 
                 <section>
-                    <h3>Spock Deep Dive</h3>
+                    <h2>Spock Deep Dive</h2>
                     <img src="lib/img/Kirk_and_Spock_swimming.jpg" class="singleImage">
                 </section>
 
@@ -365,6 +430,7 @@ void testSpockIsCool() {
   SPOCK.mindMeld(fanboy)
 }
                     </code></pre>
+                    <img src="lib/img/spock-clean-up-mop.jpg" style="position: absolute; bottom: 0px; height: 250px">
                 </section>
 
                 <section>
@@ -378,6 +444,10 @@ void testSpockIsCool() {
 
                 </section>
 
+                <section>
+                    <h6>Self documenting code helps prevent uncomfortable conversations with your future self</h6>
+                    <img src="lib/img/old-spock-to-new-spock-WHAT-WERE-YOU-THINKING.jpg" class="singleImage">
+                </section>
 
                 <section>
                     <h6>Assertions</h6>
@@ -407,7 +477,7 @@ void "expect assertions to be truthy"() {
 
                 <section>
                     <h6>Grouping assertions by subject</h6>
-                    <pre class="groovy" ><code data-trim >
+                    <pre class="groovy" ><code data-trim style="font-size: 1em">
 void "Registering a crew member is done completely"() {
     when:
     def crewMember = ship.getCrewMemberById(1)
@@ -424,7 +494,7 @@ void "Registering a crew member is done completely"() {
 
                 <section>
                     <h6>Assertions in Helpers</h6>
-                    <pre class="groovy" ><code data-trim >
+                    <pre class="groovy" ><code data-trim style="font-size: 0.9em">
 void "getCrew returns the expected size of valid crew members"() {
   when:
   def crew = ship.getCrew()
@@ -498,8 +568,12 @@ void "SelectForBudget adds crew in priority order until budget depleted"() {
                 </section>
 
                 <section>
+                    <img src="lib/img/happy-SPOCK-APPROVES-there-is-much-logic-in-this.jpg" class="fullImage" style="height: 550px;margin-top: 40px">
+                </section>
+
+                <section>
                     <h6>Single input data tables</h6>
-                    <pre class="groovy"><code data-trim >
+                    <pre class="groovy"><code data-trim style="font-size: .9em">
 @Unroll("Scotty, warp #warpSpeed")
 void "Engines don't blow up if we give it a bad command"() {
 
@@ -522,7 +596,7 @@ void "Engines don't blow up if we give it a bad command"() {
 
                 <section>
                     <h6>Using Spec values</h6>
-                    <pre class="groovy"><code data-trim >
+                    <pre class="groovy"><code data-trim style="font-size: .9em">
 @Shared CrewManager crewMgr = new CrewManagerTestingUtil()
 static final ENTERPRISE = "USS Enterprise - NCC-1701"
 
@@ -542,7 +616,7 @@ void "Using Shared and statics"() {
 
                 <section>
                     <h6>Reference Left Cells</h6>
-                    <pre class="groovy"><code data-trim >
+                    <pre class="groovy"><code data-trim style="font-size: .9em">
 given: 'an initial speed'
 ship.controls.command('warp', start)
 assert getCurrentWarpSpeed() == start
@@ -564,7 +638,7 @@ start | multiplier  || finalSpeed
 
                 <section>
                     <h6>Extract Common Calculations</h6>
-                    <pre class="groovy"><code data-trim >
+                    <pre class="groovy"><code data-trim style="font-size: .85em">
 expect: 'an initial speed'
 sendCommand('warp', start)
 
@@ -610,7 +684,7 @@ def "spock can maths"() {
 
                 <section>
                     <h6>Closure params!</h6>
-                    <pre class="groovy"><code data-trim >
+                    <pre class="groovy"><code data-trim style="font-size: .9em" >
 when:
 command.call(start)
 
@@ -624,7 +698,7 @@ maxAwareCaptain = { speed ->
 }
 
 start | command                                    | finalSpeed
-1     | { ship.command('warp 2' }                  | 2
+1     | { ship.command('warp 2') }                 | 2
 6     | { KIRK.say('Warp factor one, Mr. Sulu.') } | 1
 12    | maxAwareCaptain                            | 12
 13    | maxAwareCaptain                            | 12
@@ -650,7 +724,7 @@ start | command                                    | finalSpeed
 
                 <section>
                     <h6>Defining Mocks and Spies</h6>
-                    <pre class="groovy" style="font-size: 0.9em"><code data-trim >
+                    <pre class="groovy" ><code style="font-size: 0.9em">
 BridgeInterface bridgeInterface = Mock()
 def foodReplicator = Mock(FoodReplicator)
 Beamer beamer = Mock(Beamer)
@@ -668,7 +742,7 @@ def spockSpy = Spy(SPOCK) //New feature!
 
                 <section>
                     <h6>Injecting Mocks - Take your pick</h6>
-                    <pre class="groovy" ><code data-trim >
+                    <pre class="groovy" ><code data-trim style="font-size: 0.92em">
 Ship ship = new UssEnterprise()
 CrewManager crewManager = Mock()
 
@@ -677,12 +751,12 @@ def setup() {
 }
                     </code></pre>
 
-                    <pre class="groovy" ><code data-trim >
+                    <pre class="groovy" ><code data-trim style="font-size: 0.92em">
 CrewManager crewManager = Mock()
 Ship ship = new UssEnterprise(crewManager: crewManager)
                     </code></pre>
 
-                    <pre class="groovy" ><code data-trim >
+                    <pre class="groovy" ><code data-trim style="font-size: 0.92em">
 
 @Subject Ship ship = new UssEnterprise()
 @Collaborator CrewManager crewManager = Mock()
@@ -699,7 +773,7 @@ Ship ship = new UssEnterprise(crewManager: crewManager)
                             <img src="lib/img/spock-sugar-smacks.jpg"   style="position:relative; left:-75px; height: 450px;">
                         </div>
                         <div style="flex: 1">
-                            <pre class="groovy" style="margin-right: 0; width: 120%;position:relative; left:-50px;" ><code  data-trim>
+                            <pre class="groovy" style="margin-right: 0; width: 120%;position:relative; left:-50px;" ><code  data-trim style="font-size: 0.9em">
 
 when: 'a crew member asks for cereal'
 computer.command('I want some cereal')
@@ -793,27 +867,35 @@ then: 'expect to make a banana and fail if anything else is made'
                 </section>
 
                 <section>
-                    <h6>To test what happens if Kirk does the thing</h6>
+                    <h6>Kobayashi Maru</h6>
+                    <img src="lib/img/new-kirk-kobayashi-maru-test-pew-pew.jpg" class="singleImage">
+                </section>
+                <section>
+                    <h6>Let's test what happens if Kirk does the thing</h6>
                     <pre class="groovy" style="width: 100%;"><code data-trim data-noescape style="font-size: 0.90em" >
 when: 'Kirk pushes the big red button'
 def response = <mark>bigRedButton.push()</mark>
 
-then: 'if the targeting system works'
-targetingSystem.fireAllTheWeapons() <mark>>></mark> new TargetingResponse()
-
-then: 'the response indicates targeting worked'
-response == "Targeting confirmed."
-
-when: 'Kirk pushes the big red button'
-response = <mark>bigRedButton.push()</mark>
-
-then: 'if the targeting system throws an error'
+then: 'Klingons have fired on use and disabled out weapons'
 targetingSystem.fireAllTheWeapons() <mark>>></mark> { throw new WeaponsMalfunction('') }
 
 then: 'the response confirms the targeting failed'
 response == "I'm sorry, Captain. I'm afraid I can't do that."
 
+when: 'Kirk pushes the big red button'
+response = <mark>bigRedButton.push()</mark>
+
+then: 'but since he reprogrammed the system'
+targetingSystem.fireAllTheWeapons() <mark>>></mark> new TargetingResponse()
+
+then: 'the response indicates targeting worked'
+response == "Targeting confirmed."
+
                     </code></pre>
+                </section>
+                
+                <section>
+                    <img src="lib/img/new-star-trek-kirk-spock-changing-conditions-kobayashi-maru.gif" class="fullImage">
                 </section>
 
                 <section>
@@ -885,19 +967,17 @@ result == "Test Often and Prosper"
                 </section>
                 <section>
                     <h2>Advanced Topics</h2>
+                    <img src="lib/img/leonard-nimoy-spock-singing-bilbo-in-car-with-golf-clubs.gif" style="width: 100%">
                 </section>
 
                 <section>
-                    <h3>Groovy_</h3>
-                    <ul>
-                        <li>GroovyMock</li>
-                        <li>GroovyStub</li>
-                        <li>GroovySpy</li>
-                    </ul>
+                    <h6 style="font-family: monospace">GroovyMock, GroovyStub, GroovySpy</h6>
+                    <img src="lib/img/groovy-spock-polka-dot-bubble-shirt.png" class="singleImage">
+
                 </section>
 
                 <section>
-                    <h3>Used for mocking...</h3>
+                    <h4>Used for mocking...</h4>
                     <ul>
                         <li>dynamic methods</li>
                         <li>instances created<br/>outside your control</li>
@@ -907,8 +987,23 @@ result == "Test Often and Prosper"
                 </section>
 
                 <section>
+                    <h6>Using GroovyMock</h6>
+                    <pre class="groovy" style="width: 100%;"><code data-trim style="font-size: 0.90em"  >
+def anyFood = GroovyMock(ReplicatedFood, global: true)
 
+when:
+def courses = foodReplicator.request("A 5 course meal")
 
+then: 'call our mocked static method once'
+1 * ReplicatedFood.getStaticMenuOptions() >> ['Chicken', 'Sugar Smacks', 'Soup']
+
+and: 'Every food item created is a mock, so override tastesLike'
+5 * anyFood.tastesLike() >> ['Soup', 'Chicken']
+
+and: 'We should know what our dinner will taste like'
+courses*.tastesLike() == ['Soup', 'Chicken', 'Chicken', 'Chicken', 'Chicken']
+
+                        </code></pre>
                 </section>
 
                 <section>
@@ -924,17 +1019,23 @@ result == "Test Often and Prosper"
 
                 <section>
                     <h6>Some existing extensions</h6>
-                    <pre class="groovy"><code data-trim >
-
-@Timeout(5) //defaults to secs, or (value = 5, unit = MILLISECONDS)
+                    <div style="display: flex; justify-content: center; width: 100%;">
+                        <div style="flex: 1;">
+                            <img src="lib/img/dj-spock-blue-shirt.jpg">
+                        </div>
+                        <div style="flex: 2;">
+                            <pre class="groovy"><code data-trim style="font-size: .9em">
+@Timeout(5)
 @Use(DiscoMixin)
 @Issue('BUG-1701')
 void "is Spock"() {
-    expect: SPOCK.dance() == "Doin' the Hustle"
+  expect: SPOCK.dance() == "Doin' the Hustle"
 }
+                            </code></pre>
+                        </div>
+                    </div>
 
 
-                    </code></pre>
                 </section>
 
                 <section>
@@ -960,7 +1061,7 @@ def "marks data driven feature where all iterations pass as _failed!_"() {
                 </section>
 
                 <section>
-                    <h6>Testing a Testing Framework</h6>
+                    <h4>Testing a Testing Framework</h4>
                     <pre class="groovy"><code data-trim >
 def "@PendingFeature marks data driven feature where all iterations pass as failed"() {
   when:
