@@ -35,7 +35,35 @@
                 height: 500px;
             }
 
+            .reveal .overlayFragment {
+                position:absolute; margin-left: auto; margin-right: auto; left: 0; right: 0;
+            }
+
+            .reveal .slides section .fragment.collapse-fragment:not(.current-fragment) {
+                display: none;
+            }
+
+            .reveal .slides section .fragment.collapse-fragment.current-fragment {
+                display: inherit;
+            }
+
             #spock-junit-feature-table p { font-size: 0.55em; margin: 2px 0; padding:0px; }
+
+            <!-- -->
+            .displayNone { display: none;  }
+
+            .fragment.visible.displayNone { display: block }
+
+            .starting-fragment { /* Custom class with custom JS edit. Show this fragment on slide load */ }
+
+            .reveal .slides section .fragment.starting-fragment:not(.visible) {
+                opacity: 1;
+                visibility: visible;
+            }
+            /*.reveal .slides section .fragment.fade-down.visible,*/
+            /*.reveal .slides section .fragment.visible:not(.current-fragment) {*/
+                /*color: grey;*/
+            /*}*/
 
         </style>
 
@@ -57,6 +85,29 @@
                     </h2>
                     <p>A Java developer's guide to Spock</p>
 				</section>
+
+                <!--<section>-->
+                    <!--<div class="fragment starting-fragment semi-fade-out" data-fragment-index="0">-->
+                        <!--Starting frag-->
+                    <!--</div>-->
+
+                    <!--<div class="fragment" data-fragment-index="0">-->
+                        <!--2nd frag-->
+                    <!--</div>-->
+                <!--</section>-->
+
+
+                <!--<section>-->
+                    <!--<div class="fragment semi-fade-out" data-fragment-index="0">-->
+                        <!--Starting frag-->
+                    <!--</div>-->
+
+                    <!--<div class="fragment current-visible" data-fragment-index="0">-->
+                        <!--2nd frag-->
+                    <!--</div>-->
+                <!--</section>-->
+
+
                 <section>
                     <h3>WARNING: We will Mock Spock</h3>
                     <div style="display: flex; justify-content: center; ">
@@ -94,17 +145,17 @@
                 </section>
 				<section>
                     <h3>The new frontier</h3>
-                    <div class="fragment fade-out" style="position: absolute; width:100%;">
+                    <div class="fragment fade-out" style="position: absolute; width:100%;" data-fragment-index="0">
                         <img src="lib/img/star-trek-warp-speed-mr-scott-jason-politte.jpg" class="singleImage"
                              style="display: block;margin-left: auto; margin-right: auto;">
                     </div>
 
-                    <p class="fragment grow fade-up current-visible">
+                    <p class="fragment grow fade-up current-visible" data-fragment-index="0">
                         We now have stakeholders asking for testing metrics<br/>and faster deployment of features
                     </p>
                     <p class="fragment grow fade-up current-visible">
                         <B>Headline</B>
-                        <span><br/>How ___ deploys to production ___ times a <em>day</em></span>
+                        <span><br/>Learn how ___ deploys to production ___ times a <em>day</em></span>
                     </p>
                     <p class="fragment grow fade-up current-visible">Testing now takes less code and less time.</p>
 				</section>
@@ -116,6 +167,9 @@
                     <h3>Rockstars prosper</h3>
                     <img src="lib/img/spock-canadian-money-prosper.jpg" class="singleImage">
                 </section>
+                <section>
+                    <img src="lib/img/spock-nodding-agrees-yeah-LOGICAL.gif" class="fullImage">
+                </section>
 				<section>
                     <h3>Why not just use JUnit?</h3>
                     <img src="lib/img/spock-kirk-amok-time-fight.png"  class="singleImage"/>
@@ -126,7 +180,9 @@
                     <h3 class="fragment fade-up">You could even...</h3>
                 </section>
                 <section>
-                    <pre class="groovy" style="margin-bottom: auto" ><code data-noescape style="font-size: 0.85em">
+                    <div style="position: relative">
+                        <div class="overlayFragment" >
+                    <pre class="groovy" style="margin-bottom: auto" ><code data-trim  data-noescape style="font-size: 0.85em">
 class CrewRecruiterServiceSpockMockitoTest
       extends Specification implements CommonCrew {
     //Inject Mockito mocks into your Spock tests 😱
@@ -145,14 +201,19 @@ class CrewRecruiterServiceSpockMockitoTest
         when:
         List crew = crewRecruiterService.selectForBudget(200000, CREW)
 
-        then:
-        crew == [KIRK, SPOCK]
+        then: "Use 3rd party fluent assertion library"
+        // AKA: crew == [KIRK, SPOCK]
+        <mark>assertThat</mark>(crew).containsExactly(KIRK, SPOCK).inOrder();
     }
 }
                     </code></pre>
-                </section>
-                <section>
-                    <img src="lib/img/spock-silly-humans.jpg" class="fullImage"/>
+                        </div>
+                        <div class="fragment overlayFragment current-fragment fade-left"
+                             style="top:25px;margin:0 -100%; margin:0 calc(50% - 50vw);left:480px;left calc(100% - 50vw)"
+                             data-fragment-index="1">
+                            <img src="lib/img/spock-silly-humans.jpg" class="fullImage"/>
+                        </div>
+                  </div>
                 </section>
                 <section>
                     <h3>Why Spock kicks butt...</h3>
@@ -160,13 +221,20 @@ class CrewRecruiterServiceSpockMockitoTest
                 </section>
                 <section>
                     <h6>JUnit Example</h6>
-                    <pre class="java" style="width: 110%; left:-50px" ><code data-trim data-noescape style="font-size: .85em">
+                    <div style="position:relative">
+                    <pre class="fragment overlayFragment semi-fade-out java"
+                         data-fragment-index="0"
+                         style="width: 110%; left:-50px" ><code data-trim data-noescape style="font-size: .85em">
 @Test
 public void selectForBudget() throws Exception {
+  // Mock $100k salary for Kirk & Spock
   when(payrollService.getSalary(KIRK)).thenReturn(100000L);
   when(payrollService.getSalary(SPOCK)).thenReturn(100000L);
 
+  // When selecting crew on a $200k budget
   List&lt;CrewMember&gt; crew = crewRecruiterService.selectForBudget(200000L, ENTIRE_CREW);
+                        
+  // Then Kirk and Spock are the only 2 members selected, and returned in that order.
   Assert.assertEquals(new ArrayList<>(asList(KIRK, SPOCK)), crew);
 
   //create inOrder object passing any mocks that need to be verified in order
@@ -176,15 +244,36 @@ public void selectForBudget() throws Exception {
   inOrder.verifyNoMoreInteractions();
 }
                     </code></pre>
-                </section>
-
-                <section>
-                    <img src="lib/img/spock-big-sigh.gif"  class="fullImage"/>
+                        <div class="fragment overlayFragment fade-down" data-fragment-index="0" >
+                            <img src="lib/img/spock-big-sigh.gif" class="fullImage" style="margin:0" />
+                        </div>
+                    </div>
                 </section>
 
                 <section>
                     <h6>Spock Example</h6>
-                    <pre class="groovy" style="width: 110%; left:-50px" ><code data-trim data-noescape style="font-size: .85em">
+                    <div style="position:relative" >
+                        <pre class="fragment fade-in overlayFragment groovy" style="width: 110%;left: -50px;" data-fragment-index="0"><code data-trim data-noescape style="font-size: .85em">
+void "SelectForBudget spends budget in crew priority order /
+      and avoids unnecessary calls to payroll service"() {
+
+    when:
+    def crew = crewRecruiterService.selectForBudget(200000, ENTIRE_CREW)
+
+    then:
+    1 * payrollService.getSalary(KIRK) >> 100000  // first add Kirk
+
+    then:
+    1 * payrollService.getSalary(SPOCK) >> 100000 // add Spock after Kirk
+
+    then:
+    0 * payrollService.getSalary(_)
+
+    and:
+    crew == [KIRK, SPOCK]
+}
+                    </code></pre>
+                        <pre class="fragment fade-out overlayFragment groovy" style="width: 110%;left: -50px;" data-fragment-index="0"><code data-trim data-noescape style="font-size: .85em">
 void "SelectForBudget spends budget in crew priority order /
       and avoids unnecessary calls to payroll service"() {
 
@@ -195,7 +284,7 @@ void "SelectForBudget spends budget in crew priority order /
     1 * payrollService.getSalary(KIRK) >> 100000  // first add Kirk
 
     then: 'add Spock'
-    1 * payrollService.getSalary(SPOCK) >> 100000 // first add Spock
+    1 * payrollService.getSalary(SPOCK) >> 100000 // // add Spock after Kirk
 
     then: 'no more calls to that service since we have depleted our budget'
     0 * payrollService.getSalary(_)
@@ -204,10 +293,40 @@ void "SelectForBudget spends budget in crew priority order /
     crew == [KIRK, SPOCK]
 }
                     </code></pre>
+                    </div>
                 </section>
 
                 <section>
                     <img src="lib/img/spock-CHANGE-IS-ESSENTIAL-PROCESS.gif"  class="fullImage"/>
+                </section>
+
+                <section>
+                    <h3>My history with groovy</h3>
+                    <div style="position: relative">
+                        <div class="fragment overlayFragment current-visible" data-fragment-index="1">
+                            <img src="lib/img/damn-you-groovy.jpg"
+                                 class="singleImage" >
+                        </div>
+                        <div class="fragment overlayFragment current-visible" data-fragment-index="2">
+                            <img src="lib/img/spock-nemoy-1952-kid-monk-baroni.jpg"
+                                 class="singleImage" >
+                        </div>
+                        <div class="fragment overlayFragment current-visible" data-fragment-index="3">
+                            <img src="lib/img/spock-hair-cut.jpeg"
+                                 class="singleImage" >
+                        </div>
+                        <div class="fragment overlayFragment current-visible" data-fragment-index="4">
+                            <img src="lib/img/leonard-nimoy-spock-singing-bilbo-with-hobbit-foot.jpg"
+                                 class="singleImage" >
+                        </div>
+                        <div class="fragment overlayFragment current-visible" data-fragment-index="5">
+                            <img src="lib/img/spock-christmas-sweaters.jpg"
+                                 class="singleImage" >
+                        </div>
+
+
+                    </div>
+
                 </section>
 
                 <section>
@@ -259,14 +378,17 @@ void "SelectForBudget adds crew in priority order until budget depleted"() {
 }
                     </code></pre>
                 </section>
-                <section>
-                    <h6>Spock is Groovy</h6>
 
-                    <div style="display: flex; justify-content: center; width: 100%;">
-                        <div style="flex: 1;">
-                            <img src="lib/img/groovy-spock-neck-scarf.jpg"   style="position:relative; left:-75px;">
-                        </div>
-                        <div style="flex: 1">
+                <section>
+
+                    <div style="position: relative">
+                        <div class="fragment overlayFragment fade-out shrink" data-fragment-index="0">
+                            <h6>Spock is Groovy</h6>
+                            <div style="display: flex; justify-content: center; width: 100%;">
+                                <div style="flex: 1;">
+                                    <img src="lib/img/groovy-spock-neck-scarf.jpg"   style="position:relative; left:-75px;">
+                                </div>
+                                <div style="flex: 1">
                             <pre class="groovy" style="margin-right: 0; width: 120%;position:relative; left:-50px;" ><code data-trim >
 1 * mockService.findOfficers(crewMembers) >> {
         List crewMembers ->
@@ -276,12 +398,17 @@ void "SelectForBudget adds crew in priority order until budget depleted"() {
     }
 
                             </code></pre>
+                                    <h6 style="font-size: 0.83em">
+                                        Spock <span style="text-decoration: underline">is</span> Groovy >
+                                        JUnit <span style="text-decoration: underline">in</span> Groovy</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fragment overlayFragment collapse-fragment fade-up current-visible"
+                             data-fragment-index="0">
+                            <img src="lib/img/spock-data-awesome.jpg" class="fullImage" style="margin: 0" >
                         </div>
                     </div>
-                </section>
-                <section>
-                    <img src="lib/img/spock-data-awesome.jpg" class="fullImage">
-                    <div></div>
                 </section>
                 <section>
                     <div style="display: flex; justify-content: center; width: 100%; align-items: flex-end">
@@ -296,10 +423,11 @@ def KIRK = new CrewMember(firstName: "James", lastName: "Kirk")
 
 Range oneToTen = (1..10) // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-def crewNames = ["Kirk", "Spock", "Ensign Redshirt"]
+def crewNames = ["Kirk", "Spock", "Ensign Redshirt"] // ArrayList
 
+// Transform a collection
 List crew = crewNames.collect { String lastName ->
-    long yos = getRandomFromRange(oneToTen) //oneToTen in scope
+    long yos = getRandomFromRange(oneToTen) //calling outer scope refs
     new CrewMember(lastName: lastName, yearsOfService: yos)
 }
 
@@ -408,8 +536,8 @@ class SetupMethodsAreNotNeededSpec extends MyBaseSpecification {
                 </section>
 
                 <section>
-                <h6>Feature method structure</h6>
-                <pre class="groovy" style="font-size: 0.60em"><code data-trim >
+                    <h6 style="margin-top: 20px">Feature method structure</h6>
+                    <pre class="groovy" style="font-size: 0.60em"><code data-trim >
 void testSpockIsCool() {
   // The setup: or given: labels are optional
   def crew = [KIRK, SPOCK, SCOTTY]
@@ -430,7 +558,8 @@ void testSpockIsCool() {
   SPOCK.mindMeld(fanboy)
 }
                     </code></pre>
-                    <img src="lib/img/spock-clean-up-mop.jpg" style="position: absolute; bottom: 0px; height: 250px">
+                    <img src="lib/img/spock-clean-up-mop.jpg"
+                         style="height: 250px;position: absolute;bottom: 10px;">
                 </section>
 
                 <section>
@@ -457,7 +586,7 @@ void "expect assertions to be truthy"() {
   SPOCK.fullName == "S'chn T'gai Spock"
   SPOCK.isCool() && ! SPOCK.isFunny()
   SPOCK.rank > 0
-  SPOCK.rank
+  SPOCK.salary  // Truthy
 
   when:
   SPOCK.tellJoke()
@@ -548,7 +677,7 @@ com.objectpartners.eskens.spock.services.CrewRecruiterServiceSpockTest > Crew ha
 @Unroll("A budget of #salaryCap pays for #expectedCrew")
 void "SelectForBudget adds crew in priority order until budget depleted"() {
 
-    given: 'a flat rate of 100000 per member'
+    given: 'a flat rate of 100,000 per member'
     payrollService.getSalary(_) &gt;&gt; 100000
 
     when: 'selecting crew at various salary cap levels'
@@ -558,11 +687,11 @@ void "SelectForBudget adds crew in priority order until budget depleted"() {
     crew == expectedCrew
 
     where:
-    salaryCap   || expectedCrew
-    0           || []
-    100000      || [KIRK]
-    299999      || [KIRK, SPOCK]
-    MAX_VALUE   || ENTIRE_CREW
+    salaryCap    || expectedCrew
+    0            || []
+    100000       || [KIRK]
+    299999       || [KIRK, SPOCK]
+    MAX_VALUE    || ENTIRE_CREW
 }
                     </code></pre>
                 </section>
@@ -868,7 +997,18 @@ then: 'expect to make a banana and fail if anything else is made'
 
                 <section>
                     <h6>Kobayashi Maru</h6>
-                    <img src="lib/img/new-kirk-kobayashi-maru-test-pew-pew.jpg" class="singleImage">
+                    <div style="position: relative">
+                        <p class="fragment overlayFragment semi-fade-out" data-fragment-index="0">
+                            <img src="lib/img/new-kirk-kobayashi-maru-test-pew-pew.jpg" class="singleImage">
+                        </p>
+                        <p class="fragment overlayFragment displayNone current-visible"
+                            data-fragment-index="0" style="top:-20px;">
+                            <img src="lib/img/new-star-trek-kirk-spock-changing-conditions-kobayashi-maru.gif"
+                                 class="fullImage" >
+                        </p>
+                    </div>
+
+
                 </section>
                 <section>
                     <h6>Let's test what happens if Kirk does the thing</h6>
@@ -893,31 +1033,35 @@ response == "Targeting confirmed."
 
                     </code></pre>
                 </section>
-                
-                <section>
-                    <img src="lib/img/new-star-trek-kirk-spock-changing-conditions-kobayashi-maru.gif" class="fullImage">
-                </section>
+
 
                 <section>
-                    <h6>Returning fixed values</h6>
-                    <pre class="groovy" style="width: 100%;"><code data-trim data-noescape style="font-size: 0.90em" >
+                    <div style="position: relative; top: 20px;">
+                        <h6>Returning fixed values</h6>
+                        <pre class="groovy" style="width: 100%;"><code data-trim data-noescape style="font-size: 0.90em" >
 computer.request('What is 1 + 1') >> "2"
 computer.request('What is 1 + 2') >> "3"
 computer.request("Do the thing") >> "Okay" >> "No"
 computer.request("Tribble count") <mark>>>></mark> ["2", "3", "4", "Many"]
                     </code></pre>
-                    <h6 style="padding-top: 5px;">Returning dynamic values</h6>
-                    <pre class="groovy" style="width: 100%;"><code data-trim data-noescape style="font-size: 0.90em" >
+                        <h6 style="padding-top: 5px;">Returning dynamic values</h6>
+                        <pre class="groovy" style="width: 100%;"><code data-trim data-noescape style="font-size: 0.90em" >
 foodReplicator.make(*_) >> {args -> "Food: $args[1]; Qty: $args[0]" }
 foodReplicator.make(*_) >> {qty, food -> "Making $qty "+ pluralize(qty, food)}
-foodReplicator.make({it >> 0}, ) >> {qty, food ->
+
+// Complex mocking
+foodReplicator.make(*_) >> {int qty, String food ->
     if (food == 'Cereal') {
         return 'Sorry, we are out of sugar smacks'
     }
     return "Making $qty "+ pluralize(qty, food)
 }
 
+// Forcing exceptions
+foodReplicator.make( {it <= 0} , _ ) >> { throw new InvalidQuantity(it[0]) }
+
                     </code></pre>
+                    </div>
                 </section>
 
                 <section>
@@ -949,7 +1093,7 @@ remaining == 33482797
 
                 <section>
                     <h6>Wrapping method calls</h6>
-                    <pre class="groovy" ><code data-trim style="font-size: 0.90em"  >
+                    <pre class="groovy" style="width: 100%;"><code data-noescape data-trim style="font-size: 1.02em"  >
 def alienLibrary = Spy(AlienLibrary)
 
 when:
@@ -958,7 +1102,7 @@ def result = comms.sendBeacon('Hailing Borg Ship')
 then: "We call the actual implementation _after_ we mess with it"
 alienLibrary.receive(_) { msg ->
     def alteredOutgoingMsg = filterNSFW(msg)
-    def alienResp = callRealMethodWithArgs(alteredOutgoingMsg)
+    def alienResp = <mark>callRealMethodWithArgs</mark>(alteredOutgoingMsg)
     return translateResponse(alienResp)
 }
 result == "Test Often and Prosper"
@@ -968,6 +1112,155 @@ result == "Test Often and Prosper"
                 <section>
                     <h2>Advanced Topics</h2>
                     <img src="lib/img/leonard-nimoy-spock-singing-bilbo-in-car-with-golf-clubs.gif" style="width: 100%">
+                </section>
+
+                <section>
+                    <h6>Spock Modules & Extensions</h6>
+                    <img src="lib/img/simpsons-i-am-not-spock-i-am-spock.gif" class="singleImage">
+                </section>
+                <section>
+                    <h6>Spring Module</h6>
+                    <p>Provides Spring integration so beans can be injected into integration specs</p>
+                    <h6>Write your own extension</h6>
+                    <p>Or borrow ones like the great subject/collaborator extension</p>
+                </section>
+
+                <section>
+                    <h4>Spring Integration Testing</h4>
+                    <pre class="groovy" style="width: 100%;"><code data-trim style="font-size: 1.05em"  >
+@SpringBootTest
+class PayrollServiceIntegrationTest extends Specification {
+
+  @Autowire MockMvc mvc
+  @Autowire PayrollService payrollService
+
+  // Cool use of new Spy(someInstance)
+  PayrollService payrollServiceSpy = Spy(payrollService)
+
+  void 'Delegates to Payroll Service'() {
+    when:
+    mvc.perform(get("/payroll")).andReturn().response
+
+    then: 'Call for all 5 of our crew members'
+    5 * payrollServiceSpy.getSalaryFor(_)
+  }
+}
+                        </code></pre>
+                </section>
+
+                <section>
+                    <h6>Spring Integration Testing with Spock Mocks ~ Pt 1</h6>
+                    <pre class="groovy" style="width: 100%;"><code data-trim style="font-size: 1.05em"  >
+@SpringBootTest
+class CrewServiceIntegrationTest extends Specification {
+
+  @Autowired CrewService crewService
+  @Autowired ExternalSalaryService mockSalaryService
+
+  // test, tests, tests
+
+  /** Override Spring's beans with Spock mocks **/
+  @TestConfiguration
+  static class Config {
+    private DetachedMockFactory factory = new DetachedMockFactory()
+
+    @Bean
+    ExternalSalaryService externalSalaryService() {
+        factory.Mock(ExternalSalaryService)
+    }
+  }
+}
+                        </code></pre>
+                </section>
+
+                <section>
+                    <h6>Spring Integration Testing with Spock Mocks ~ Pt 2</h6>
+                    <pre class="groovy" style="width: 100%;"><code data-trim style="font-size: 1.05em"  >
+@Autowired CrewService crewService  // class under test
+@Autowired ExternalSalaryService mockSalaryService // Mocked Bean
+
+void "crew service delegates to ExternalSalaryService"() {
+
+  when: 'we have 5 crew members in H2'
+  def amt = crewService.getTotalCrewCost()
+
+  then: 'use the mocked spring bean in an integration test 😃'
+  mockSalaryService.getSalaryFor(_) >> 100000
+  amt == 500000
+
+}
+                        </code></pre>
+                    <p style="color: rgb(63,63,63);font-size: smaller">
+                        <a href="http://bit.ly/opi-spring-integration-testing-with-spock-mocks"
+                           target="_blank">Blog post</a> with more information</p>
+                </section>
+
+                <section>
+                    <h6>Some existing extensions</h6>
+                    <div style="display: flex; justify-content: center; width: 100%;">
+                        <div style="flex: 1;">
+                            <img src="lib/img/dj-spock-blue-shirt.jpg">
+                        </div>
+                        <div style="flex: 2;">
+                            <pre class="groovy"><code data-trim style="font-size: .9em">
+@AutoCleanup def fio = new FileIOService()
+
+@Timeout(5)
+@Use(DiscoMixin)
+@Issue('BUG-1701')
+void "is Spock cool"() {
+  expect: SPOCK.dance() == "Doin' the Hustle"
+}
+                            </code></pre>
+                        </div>
+                    </div>
+
+
+                </section>
+
+                <section>
+                    <h6>Conditional Testing</h6>
+                    <pre class="groovy"><code>
+@Ignore("Optional description")
+
+@IgnoreRest //Only run tests annotated w/ this
+
+@IgnoreIf({ System.getProperty("os.name").contains("borg") })
+
+@Requires({ os.holodeck })
+
+@PendingFeature
+def "Failing tests marked as skipped"() { expect: false }
+
+@PendingFeature  // Failing Test!  No longer pending :-)
+def "marks data driven feature where all iterations pass as _failed!_"() {
+    expect: test
+    where: test << [true, true, true]
+}
+                    </code></pre>
+                </section>
+
+
+                <section>
+                    <h4>JUnit rules</h4>
+                    <pre class="groovy" style="width: 100%;"><code data-trim style="font-size: 1.0em"  >
+@Rule
+public Retry retry = new Retry(3);
+
+void "taking kobayashi maru test"() {
+  expect:
+  kobayashiMaru.takeTest().results == 'passed'
+}
+
+void "access network filesystem"() {
+  when:
+  federationCommand.requestFiles('Kobayashi Maru')
+
+  then:
+  noExceptionThrown()
+}
+
+                        </code></pre>
                 </section>
 
                 <section>
@@ -1007,62 +1300,8 @@ courses*.tastesLike() == ['Soup', 'Chicken', 'Chicken', 'Chicken', 'Chicken']
                 </section>
 
                 <section>
-                    <h6>Spock Modules & Extensions</h6>
-                    <img src="lib/img/simpsons-i-am-not-spock-i-am-spock.gif" class="singleImage">
-                </section>
-                <section>
-                    <h6>Spring Module</h6>
-                    <p>Provides Spring integration so beans can be injected into integration specs</p>
-                    <h6>Write your own extension</h6>
-                    <p>Or borrow ones like the great subject/collaborator extension</p>
-                </section>
-
-                <section>
-                    <h6>Some existing extensions</h6>
-                    <div style="display: flex; justify-content: center; width: 100%;">
-                        <div style="flex: 1;">
-                            <img src="lib/img/dj-spock-blue-shirt.jpg">
-                        </div>
-                        <div style="flex: 2;">
-                            <pre class="groovy"><code data-trim style="font-size: .9em">
-@Timeout(5)
-@Use(DiscoMixin)
-@Issue('BUG-1701')
-void "is Spock"() {
-  expect: SPOCK.dance() == "Doin' the Hustle"
-}
-                            </code></pre>
-                        </div>
-                    </div>
-
-
-                </section>
-
-                <section>
-                    <h6>Conditional Testing</h6>
-                    <pre class="groovy"><code>
-@Ignore("Optional description")
-
-@IgnoreRest //Only run tests annotated w/ this
-
-@IgnoreIf({ System.getProperty("os.name").contains("borg") })
-
-@Requires({ os.holodeck })
-
-@PendingFeature
-def "Failing tests marked as skipped"() { expect: false }
-
-@PendingFeature  // Failing Test!  No longer pending :-)
-def "marks data driven feature where all iterations pass as _failed!_"() {
-    expect: test
-    where: test << [true, true, true]
-}
-                    </code></pre>
-                </section>
-
-                <section>
-                    <h4>Testing a Testing Framework</h4>
-                    <pre class="groovy"><code data-trim >
+                    <h3>Testing a Testing Framework</h3>
+                    <pre class="groovy" style="width: 100%"><code data-trim style="font-size: 0.82em;" >
 def "@PendingFeature marks data driven feature where all iterations pass as failed"() {
   when:
     runner.runWithImports("""
@@ -1087,6 +1326,14 @@ def "@PendingFeature marks data driven feature where all iterations pass as fail
                     <img src="lib/img/gangsta-spock.jpg"  class="singleImage"/>
                 </section>
 
+                <section data-background-iframe="https://www.youtube.com/embed/1aQLsPCxkPw?rel=0&autoplay=1&controls=0&showinfo=1&autohide=1"
+                         data-background-interactive>
+                </section>
+
+                <section>
+                    <h2>Questions?</h2>
+                    <img src="lib/img/youn-and-old-spock-each-wtf.png" class="singleImage">
+                </section>
 
                 <section>
                     <h3>Thank You</h3>
@@ -1191,6 +1438,7 @@ function linkify( selector ) {
 			// More info https://github.com/hakimel/reveal.js#configuration
 			Reveal.initialize({
 				history: true,
+                viewDistance: 1,
                 //center: false,
 				// More info https://github.com/hakimel/reveal.js#dependencies
 				dependencies: [
