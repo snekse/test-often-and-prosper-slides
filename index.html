@@ -27,8 +27,16 @@
                 font-size: large;
             }
 
-            img.singleImage {
-                height: 400px;
+            .reveal section img.singleImageSm {
+                height: 400px; margin-bottom: 0;
+            }
+
+            .reveal section img.singleImage {
+                height: 450px; margin: 0;
+            }
+
+            .reveal section img.singleImageLg {
+                height: 475px; margin-bottom: 0;
             }
 
             img.fullImage {
@@ -108,7 +116,7 @@
                 <!--</section>-->
 
 
-                <section>
+                <section data-transition-speed="slow">
                     <h3>WARNING: We will Mock Spock</h3>
                     <div style="display: flex; justify-content: center; ">
                         <div style="flex: 1;">
@@ -209,9 +217,9 @@ class CrewRecruiterServiceSpockMockitoTest
                     </code></pre>
                         </div>
                         <div class="fragment overlayFragment current-fragment fade-left"
-                             style="top:25px;margin:0 -100%; margin:0 calc(50% - 50vw);left:480px;left calc(100% - 50vw)"
+                             style="top:25px;margin:0 -100%; margin:0 calc(50% - 50vw);left:220px;left: calc(80% - 50vw)"
                              data-fragment-index="1">
-                            <img src="lib/img/spock-silly-humans.jpg" class="fullImage"/>
+                            <img src="lib/img/spock-silly-humans.jpg" class="fullImage" style="max-width:inherit"/>
                         </div>
                   </div>
                 </section>
@@ -219,7 +227,7 @@ class CrewRecruiterServiceSpockMockitoTest
                     <h3>Why Spock kicks butt...</h3>
                     <img src="lib/img/spock_amok_time_bounce.gif" class="singleImage"/>
                 </section>
-                <section>
+                <section data-transition-speed="slow">
                     <h6>JUnit Example</h6>
                     <div style="position:relative">
                     <pre class="fragment overlayFragment semi-fade-out java"
@@ -379,7 +387,7 @@ void "SelectForBudget adds crew in priority order until budget depleted"() {
                     </code></pre>
                 </section>
 
-                <section>
+                <section data-transition-speed="slow">
 
                     <div style="position: relative">
                         <div class="fragment overlayFragment fade-out shrink" data-fragment-index="0">
@@ -483,7 +491,7 @@ def "A very descriptive name for our test"() {
 
                 <section>
                     <h4 style="margin-bottom: 10px">Man that's Groovy</h4>
-                    <img src="lib/img/leonard-nimoy-spock-singing-bilbo-with-groovy-teens.gif" class="fullImage">
+                    <img src="lib/img/leonard-nimoy-spock-singing-bilbo-with-groovy-teens.gif" class="singleImageLg">
                 </section>
 
                 <section>
@@ -573,9 +581,10 @@ void testSpockIsCool() {
 
                 </section>
 
-                <section>
+                <section style="width: 120%;left:-120px;">
                     <h6>Self documenting code helps prevent uncomfortable conversations with your future self</h6>
-                    <img src="lib/img/old-spock-to-new-spock-WHAT-WERE-YOU-THINKING.jpg" class="singleImage">
+                    <img src="lib/img/old-spock-to-new-spock-WHAT-WERE-YOU-THINKING.jpg" class="singleImage"
+                         style="max-width: none; ">
                 </section>
 
                 <section>
@@ -998,10 +1007,12 @@ then: 'expect to make a banana and fail if anything else is made'
                 <section>
                     <h6>Kobayashi Maru</h6>
                     <div style="position: relative">
-                        <p class="fragment overlayFragment semi-fade-out" data-fragment-index="0">
-                            <img src="lib/img/new-kirk-kobayashi-maru-test-pew-pew.jpg" class="singleImage">
+                        <p class="fragment overlayFragment semi-fade-out"
+                           data-fragment-index="0" style="width: 120%;left:-110px;">
+                            <img src="lib/img/new-kirk-kobayashi-maru-test-pew-pew.jpg"
+                                 class="singleImage" style="max-width: none">
                         </p>
-                        <p class="fragment overlayFragment displayNone current-visible"
+                        <p class="fragment overlayFragment displayNone current-visible fade-up"
                             data-fragment-index="0" style="top:-20px;">
                             <img src="lib/img/new-star-trek-kirk-spock-changing-conditions-kobayashi-maru.gif"
                                  class="fullImage" >
