@@ -1115,34 +1115,37 @@ result == "Test Often and Prosper"
                 </section>
 
                 <section>
-                    <h6>Spock Modules & Extensions</h6>
+                    <h4>Spock Modules & Extensions</h4>
                     <img src="lib/img/simpsons-i-am-not-spock-i-am-spock.gif" class="singleImage">
                 </section>
                 <section>
-                    <h6>Spring Module</h6>
+                    <h4>Spring Module</h4>
                     <p>Provides Spring integration so beans can be injected into integration specs</p>
-                    <h6>Write your own extension</h6>
+                    <h4>Write your own extension</h4>
                     <p>Or borrow ones like the great subject/collaborator extension</p>
                 </section>
 
                 <section>
                     <h4>Spring Integration Testing</h4>
-                    <pre class="groovy" style="width: 100%;"><code data-trim style="font-size: 1.05em"  >
+                    <pre class="groovy" style="width: 100%;"><code data-trim style="font-size: 0.95em"  >
 @SpringBootTest
-class PayrollServiceIntegrationTest extends Specification {
-
+class CrewMemberIntegrationTest extends Specification {
   @Autowire MockMvc mvc
-  @Autowire PayrollService payrollService
+  @Autowire CrewRepo crewRepo
+  def jsonSlurper = new JsonSlurper()
 
-  // Cool use of new Spy(someInstance)
-  PayrollService payrollServiceSpy = Spy(payrollService)
+  void 'can fetch crew member by ID'() {
+    def rank = new Rank(level: 5, title: 'Grand Admiral')
+    def khan = new CrewMember(lastName:'Khan', rank: rank )
+    CrewMember khan = crewRepo.saveAndFlush(khan)
 
-  void 'Delegates to Payroll Service'() {
     when:
-    mvc.perform(get("/payroll")).andReturn().response
+    def data = jsonSlurper.parseText(getJson(mvc, "/crew/${khan.id}"))
 
-    then: 'Call for all 5 of our crew members'
-    5 * payrollServiceSpy.getSalaryFor(_)
+    then:
+    data.id != null
+    data.lastName == 'Khan'
+    data.rank.title == 'Grand Admiral'
   }
 }
                         </code></pre>
@@ -1298,6 +1301,10 @@ courses*.tastesLike() == ['Soup', 'Chicken', 'Chicken', 'Chicken', 'Chicken']
 
                         </code></pre>
                 </section>
+                <section>
+                    <h3>Wanna see somethin' cool?</h3>
+                    <img src="lib/img/nimoy-car.webp" class="singleImage">
+                </section>
 
                 <section>
                     <h3>Testing a Testing Framework</h3>
@@ -1326,8 +1333,18 @@ def "@PendingFeature marks data driven feature where all iterations pass as fail
                     <img src="lib/img/gangsta-spock.jpg"  class="singleImage"/>
                 </section>
 
-                <section data-background-iframe="https://www.youtube.com/embed/1aQLsPCxkPw?rel=0&autoplay=1&controls=0&showinfo=1&autohide=1"
-                         data-background-interactive>
+                <section class="id-my-work-is-done-here">
+                    <!--
+
+                         data-background-iframe="https://www.youtube.com/embed/1aQLsPCxkPw?rel=0&autoplay=1&controls=0&showinfo=1&autohide=1"
+                         data-background-interactive
+                    -->
+
+
+                    <!--<section data-background-image="lib/img/simpsons-my-work-here-is-done.gif" data-background-size="contain">-->
+                        <!--&lt;!&ndash;<img src="lib/img/simpsons-my-work-here-is-done.gif">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<img src="lib/img/simpsons-my-work-here-is-done.mp4">&ndash;&gt;-->
+                    <!--</section>-->
                 </section>
 
                 <section>
@@ -1336,97 +1353,10 @@ def "@PendingFeature marks data driven feature where all iterations pass as fail
                 </section>
 
                 <section>
-                    <h3>Thank You</h3>
+                    <h2>Thank You</h2>
                     <img src="lib/img/spock-may-the-force-be-with-you.jpg" class="singleImage">
                 </section>
 
-
-                <!---
-                <section>
-                    <table id="spock-junit-feature-table">
-                        <colgroup>
-                            <col style="width: 50%;">
-                            <col style="width: 50%;">
-                        </colgroup>
-                        <thead>
-                        <tr>
-                            <th class="tableblock halign-left valign-top">Spock</th>
-                            <th class="tableblock halign-left valign-top">JUnit</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td class="tableblock halign-left valign-top"><p>Specification</p></td>
-                            <td class="tableblock halign-left valign-top"><p>Test class</p></td>
-                        </tr>
-                        <tr>
-                            <td class="tableblock halign-left valign-top"><p><code>setup()</code></p></td>
-                            <td class="tableblock halign-left valign-top"><p><code>@Before</code></p></td>
-                        </tr>
-                        <tr>
-                            <td class="tableblock halign-left valign-top"><p><code>cleanup()</code></p></td>
-                            <td class="tableblock halign-left valign-top"><p><code>@After</code></p></td>
-                        </tr>
-                        <tr>
-                            <td class="tableblock halign-left valign-top"><p><code>setupSpec()</code></p></td>
-                            <td class="tableblock halign-left valign-top"><p><code>@BeforeClass</code></p></td>
-                        </tr>
-                        <tr>
-                            <td class="tableblock halign-left valign-top"><p><code>cleanupSpec()</code></p></td>
-                            <td class="tableblock halign-left valign-top"><p><code>@AfterClass</code></p></td>
-                        </tr>
-                        <tr>
-                            <td class="tableblock halign-left valign-top"><p>Feature</p></td>
-                            <td class="tableblock halign-left valign-top"><p>Test</p></td>
-                        </tr>
-                        <tr>
-                            <td class="tableblock halign-left valign-top"><p>Feature method</p></td>
-                            <td class="tableblock halign-left valign-top"><p>Test method</p></td>
-                        </tr>
-                        <tr>
-                            <td class="tableblock halign-left valign-top"><p>Data-driven feature</p></td>
-                            <td class="tableblock halign-left valign-top"><p>Theory</p></td>
-                        </tr>
-                        <tr>
-                            <td class="tableblock halign-left valign-top"><p>Condition</p></td>
-                            <td class="tableblock halign-left valign-top"><p>Assertion</p></td>
-                        </tr>
-                        <tr>
-                            <td class="tableblock halign-left valign-top"><p>Exception condition</p></td>
-                            <td class="tableblock halign-left valign-top"><p><code>@Test(expected=…​)</code></p></td>
-                        </tr>
-                        <tr>
-                            <td class="tableblock halign-left valign-top"><p>Interaction</p></td>
-                            <td class="tableblock halign-left valign-top"><p>Mock expectation (e.g. in Mockito)</p></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </section>
-
-                --->
-
-                <!---
-                <section>
-                    <h2>Pretty Code</h2>
-                    <pre><code data-trim contenteditable>
-function linkify( selector ) {
-  if( supports3DTransforms ) {
-
-    var nodes = document.querySelectorAll( selector );
-
-    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
-      var node = nodes[i];
-
-      if( !node.className ) {
-        node.className += ' roll';
-      }
-    }
-  }
-}
-					</code></pre>
-                    <p>Code syntax highlighting courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
-                </section>
-                --->
 			</div>
 		</div>
 	</div>
@@ -1448,6 +1378,21 @@ function linkify( selector ) {
 					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
 				]
 			});
+            document.addEventListener("DOMContentLoaded", function(event) {
+                let el = document.getElementsByClassName("id-my-work-is-done-here")[0];
+                let qryParams = location.search;
+                let autoPlayFlag = qryParams.includes('autoplay') ? 1 : 0;
+
+                if (autoPlayFlag) {
+                    let myWorkUri = "https://www.youtube.com/embed/1aQLsPCxkPw" +
+                        "?rel=0&controls=0&showinfo=1&autohide=1&autoplay=1";
+                    el.setAttribute('data-background-iframe',myWorkUri);
+                    el.setAttribute('data-background-interactive', "true");
+                } else {
+                    el.setAttribute('data-background-image','lib/img/simpsons-my-work-here-is-done.gif');
+                    el.setAttribute('data-background-size','contain');
+                }
+            });
 		</script>
 	</body>
 </html>
