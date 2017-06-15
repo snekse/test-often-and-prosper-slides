@@ -20,5 +20,12 @@ If you haven't been using JDK 8, the functional concepts and collection comprehe
 From the project root, run `npm start`. 
 This will start a node server providing the slides on port `8000`. 
 By default, the slides play without movies or sound. 
-If you would like to enable those, add a `?autoplay` to the url like this:
+If you would like to enable those, add a `?autoplay` to the url like this: 
 [http://localhost:8000/?autoplay](http://localhost:8000/?autoplay)
+
+## Companion Project
+
+There is a small starter project that loosely accompany these slides. 
+It's meant to get you up and running quickly with something you can play around with.
+
+It is located at [test-often-and-prosper](https://github.com/snekse/test-often-and-prosper)
