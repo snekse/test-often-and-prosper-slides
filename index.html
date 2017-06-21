@@ -1121,7 +1121,7 @@ when:
 def result = comms.sendBeacon('Hailing Borg Ship')
 
 then: "We call the actual implementation _after_ we mess with it"
-alienLibrary.receive(_) { msg ->
+alienLibrary.receive(_) >> { msg ->
     def alteredOutgoingMsg = filterNSFW(msg)
     def alienResp = <mark>callRealMethodWithArgs</mark>(alteredOutgoingMsg)
     return translateResponse(alienResp)
