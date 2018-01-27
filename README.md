@@ -17,7 +17,7 @@ If you haven't been using JDK 8, the functional concepts and collection comprehe
 
 **Localhost**
 
-From the project root, run `npm start`. 
+From the project root, run `npm start` or `yarn start`. 
 This will start a node server providing the slides on port `8000`. 
 By default, the slides play without movies or sound. 
 If you would like to enable those, add a `?autoplay` to the url like this: 
