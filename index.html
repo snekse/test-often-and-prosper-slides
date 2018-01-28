@@ -82,6 +82,14 @@
                 font-size: 0.8em;
             }
 
+            .hljs mark.please-no {
+                background-color: rgba(127, 159, 55, .25) !important;
+            }
+
+            .hljs mark.please-no .hljs-comment {
+                color: red !important;
+            }
+
         </style>
 
 		<!-- Printing and PDF exports -->
@@ -206,7 +214,7 @@
                     <pre class="groovy" style="margin-bottom: auto" ><code data-trim  data-noescape style="font-size: 0.85em">
 class CrewRecruiterServiceSpockMockitoTest
       extends Specification implements CommonCrew {
-    //Inject Mockito mocks into your Spock tests 😱
+    //<mark class="please-no">Inject Mockito mocks into your Spock tests</mark> 😱
     @InjectMocks CrewRecruiterService crewRecruiterService
 
     @Mock PayrollService payrollService
