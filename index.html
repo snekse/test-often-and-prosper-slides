@@ -553,11 +553,12 @@ class MyFirstSpockSpec extends Specification {
                     <h6>Spec fixture setup</h6>
                     <pre class="groovy" style="font-size: 0.65em"><code data-trim >
 class SetupMethodsAreNotNeededSpec extends MyBaseSpecification {
-
+  // Setup methods aren't really needed
   StringUtil stringUtilOne = new StringUtil()
-  StringUtil stringUtilTwo
-
   @Shared NumberUtil numberUtilOne = new NumberUtil()
+
+  /* ----------------  But if you really want them... ----------------*/
+  StringUtil stringUtilTwo
   @Shared NumberUtil numberUtilTwo
 
   def setup() {
