@@ -228,7 +228,7 @@ class CrewRecruiterServiceSpockMockitoTest
                .thenReturn(100000L)
 
         when:
-        List crew = crewRecruiterService.selectForBudget(200000, CREW)
+        List crew = crewRecruiterService.selectForBudget(200000L, POOL)
 
         then: "Use 3rd party fluent assertion library"
         // AKA: crew == [KIRK, SPOCK]
@@ -261,7 +261,7 @@ public void selectForBudget() throws Exception {
   when(payrollService.getSalary(SPOCK)).thenReturn(100000L);
 
   // When selecting crew on a $200k budget
-  List&lt;CrewMember&gt; crew = crewRecruiterService.selectForBudget(200000L, ENTIRE_CREW);
+  List&lt;CrewMember&gt; crew = crewRecruiterService.selectForBudget(200000L, POOL);
                         
   // Then Kirk and Spock are the only 2 members selected, and returned in that order.
   Assert.assertEquals(new ArrayList<>(asList(KIRK, SPOCK)), crew);
@@ -287,7 +287,7 @@ void "SelectForBudget spends budget in crew priority order /
       and avoids unnecessary calls to payroll service"() {
 
     when:
-    def crew = crewRecruiterService.selectForBudget(200000, ENTIRE_CREW)
+    def crew = crewRecruiterService.selectForBudget(200000L, POOL)
 
     then:
     1 * payrollService.getSalary(KIRK) >> 100000  // first add Kirk
@@ -307,7 +307,7 @@ void "SelectForBudget spends budget in crew priority order /
       and avoids unnecessary calls to payroll service"() {
 
     when: 'We have enough to pay for Kirk and Spock'
-    def crew = crewRecruiterService.selectForBudget(200000, ENTIRE_CREW)
+    def crew = crewRecruiterService.selectForBudget(200000L, POOL)
 
     then: 'We only make our expensive external system salary calls in the order we expect'
     1 * payrollService.getSalary(KIRK) >> 100000  // first add Kirk
@@ -374,16 +374,20 @@ void "SelectForBudget spends budget in crew priority order /
                     <h6>Easy mocking. Easy verifications.</h6>
                     <pre class="groovy"><code data-trim style="font-size: .85em">
 def "set course test"() {
+    Route routeFromEarthToAndoria = new Route([
+        "Hang a left at Mars",
+        "Turn right at Alpha Centauri A",
+        "Gravity assist from Midos V"])
+
     when:
     Route results = navigationSystem.setCourse("Andoria")
 
     then:
-    1 * collisionAvoidanceSystems.findRoute("Earth", "Andoria") >> {
-        new Route(["Hang a left at Mars",
-                   "Turn right at Alpha Centauri A",
-                   "Gravity assist from Midos V"])
-    }
+//  ↓ verify this mock called exactly 1 time w/ these params
+    1 * mockCAS.findRoute("Earth", "Andoria") >> routeFromEarthToAndoria
+//                                            ↑ (then return) pojo route
     results.directions.first() == "Hang a left at Mars"
+
 }
                     </code></pre>
                 </section>
@@ -394,7 +398,7 @@ def "set course test"() {
 void "SelectForBudget adds crew in priority order until budget depleted"() {
 
     when: 'selecting crew at various salary cap levels'
-    def crew = crewRecruiterService.selectForBudget(salaryCap, ENTIRE_CREW)
+    def crew = crewRecruiterService.selectForBudget(salaryCap, POOL)
 
     then: 'we get back crew we can afford in priority order'
     crew == expectedCrew
@@ -404,7 +408,7 @@ void "SelectForBudget adds crew in priority order until budget depleted"() {
     0           || []
     100000      || [KIRK]
     299999      || [KIRK, SPOCK]
-    MAX_VALUE   || ENTIRE_CREW
+    MAX_VALUE   || POOL
 }
                     </code></pre>
                 </section>
@@ -482,11 +486,11 @@ assert KIRK != SPOCK  // == is .equals, === for references
                             <pre class="groovy" style="margin-top: 15px; left:-50px; margin-right: 0; width: 98%;"><code data-trim >
 @Subject Starship starship = new Starship()
 @Collaborator PayrollService payrollService = Mock()
-@Shared def CREW = ["Kirk", "Spock", "Ensign Redshirt"].asImmutable()
-@Collaborator def crewManager = Spy(CrewManager, constructorArgs: [CREW])
+@Shared def POOL = ["Kirk", "Spock", "Ensign Redshirt"].asImmutable()
+@Collaborator def crewManager = Spy(CrewManager, constructorArgs: [POOL])
 
 def "A very descriptive name for our test"() {
-    def currentCrew = ['RebelSpy'] + CREW  /* given: */
+    def currentCrew = ['RebelSpy'] + POOL  /* given: */
 
     expect:
     currentCrew.size() == 4
@@ -712,7 +716,7 @@ void "SelectForBudget adds crew in priority order until budget depleted"() {
     payrollService.getSalary(_) &gt;&gt; 100000
 
     when: 'selecting crew at various salary cap levels'
-    def crew = crewRecruiterService.selectForBudget(salaryCap, ENTIRE_CREW)
+    def crew = crewRecruiterService.selectForBudget(salaryCap, POOL)
 
     then: 'we get back crew we can afford in priority order'
     crew == expectedCrew
@@ -722,7 +726,7 @@ void "SelectForBudget adds crew in priority order until budget depleted"() {
     0            || []
     100000       || [KIRK]
     299999       || [KIRK, SPOCK]
-    MAX_VALUE    || ENTIRE_CREW
+    MAX_VALUE    || POOL
 }
                     </code></pre>
                 </section>
@@ -891,7 +895,7 @@ Beamer beamer = Mock(Beamer)
 
 PayrollService payrollService = Spy()
 def engineControl = Spy(EngineControl)
-def crewManager = Spy(CrewManager, constructorArgs: [CREW])
+def crewManager = Spy(CrewManager, constructorArgs: [POOL])
 
 CrewMember SPOCK = h2.getCrewMember( [ lastName: 'Spock' ])
 def spockSpy = Spy(SPOCK) //New feature!
@@ -1118,7 +1122,7 @@ then: """
         but let the impl do it's thing. When the impl calls
         getSalaryFor, that's when our stubbing comes in
       """
-1 * payrollService.getTotalCrewPayroll(CREW)
+1 * payrollService.getTotalCrewPayroll(POOL)
 remaining == 33482797
 
                         </code></pre>
