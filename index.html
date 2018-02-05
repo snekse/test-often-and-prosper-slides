@@ -662,20 +662,21 @@ void "Registering a crew member is done completely"() {
 
                 <section>
                     <h6>Assertions in Helpers</h6>
-                    <pre class="groovy" ><code data-trim style="font-size: 0.9em">
+                    <pre class="groovy" ><code data-trim data-noescape style="font-size: 0.9em">
 void "getCrew returns the expected size of valid crew members"() {
   when:
   def crew = ship.getCrew()
 
   then:
   crew.size() == 12
-  crew.each { isValidCrewMember(it) }
 
   // This would not tell you _which_ crewMember failed the assertion
-  // crew.every { crewMember.fullName?:'' != '' }
+  <span style="text-decoration: line-through">crew.every { crewMember.fullName?:'' != '' }</span>
+
+  crew.each { assertIsValidCrewMember(it) }
 }
 
-void isValidCrewMember(crewMember) {
+void assertIsValidCrewMember(crewMember) {
     assert crewMember.fullName?:'' != ''
 }
                     </code></pre>
