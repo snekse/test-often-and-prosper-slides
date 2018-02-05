@@ -424,12 +424,15 @@ void "SelectForBudget adds crew in priority order until budget depleted"() {
                                 </div>
                                 <div style="flex: 1">
                             <pre class="groovy" style="margin-right: 0; width: 120%;position:relative; left:-50px;" ><code data-trim >
+Closure filterCrewByLevel = { List crew, int rank ->
+    crew.findResults { it.rank.commandLevel < rank }
+}
+
+// ...
+
 1 * mockService.findOfficers(crewMembers) >> {
-        List crewMembers ->
-        crewMembers.findResults {
-            it.rank?.commandLevel < 5
-        }
-    }
+    filterCrewByLevel(it, 5)
+}
 
                             </code></pre>
                                     <h6 style="font-size: 0.83em">
