@@ -13,6 +13,8 @@
 
 		<!-- OPI style -->
 		<link rel="stylesheet" href="lib/css/object-partners-revealjs-theme.css">
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:100,100i,300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
+
         <style>
 
             .reveal pre {
@@ -726,7 +728,7 @@ void "SelectForBudget adds crew in priority order until budget depleted"() {
     then: 'we get back crew we can afford in priority order'
     crew == expectedCrew
 
-    where:
+    where: 'input of salaryCap should produce output of expectedCrew'
     salaryCap    || expectedCrew
     0            || []
     100000       || [KIRK]
