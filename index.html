@@ -855,7 +855,7 @@ def "spock can maths"() {
 
                 <section>
                     <h6>Closure params!</h6>
-                    <pre class="groovy"><code data-trim style="font-size: .9em" >
+                    <pre class="groovy"><code data-trim data-noescape style="font-size: .9em" >
 when:
 command.call(start)
 
@@ -864,15 +864,15 @@ getCurrentWarpSpeed() == finalSpeed
 
 where: 'fun with closures'
 maxAwareCaptain = { speed ->
-    KIRK.say( (speed > 12) ? "Sulu, WHAT ARE YOU DOING! Slow Down!"
-                           : "Steady as she goes, Mr Sulu" )
+    KIRK.say( speed > 12 ? <span class="hljs-string">'Sulu, WHAT ARE YOU DOING! Slow Down!'</span>
+                         : <span class="hljs-string">'Steady as she goes, Mr Sulu'</span>)
 }
 
-start | command                                    | finalSpeed
-1     | { ship.command('warp 2') }                 | 2
-6     | { KIRK.say('Warp factor one, Mr. Sulu.') } | 1
-12    | maxAwareCaptain                            | 12
-13    | maxAwareCaptain                            | 12
+start | command                                    || finalSpeed
+1     | { ship.command('warp 2') }                 || 2
+6     | { KIRK.say('Warp factor one, Mr. Sulu.') } || 1
+12    | maxAwareCaptain                            || 12
+13    | maxAwareCaptain                            || 12
 
                     </code></pre>
                 </section>
@@ -1115,22 +1115,22 @@ foodReplicator.make( {it <= 0} , _ ) >> { throw new InvalidQuantity(it[0]) }
 
                 <section>
                     <h6>Selective Mocking</h6>
-                    <pre class="groovy" ><code data-trim style="font-size: 0.98em" >
+                    <pre class="groovy" ><code data-trim data-noescape style="font-size: 0.98em" >
 def payrollService = Spy(PayrollService) {
     // Mock the pay for every crew member the same amount
-    _ * getSalaryFor(_ as CrewMember) >> 50000
+    _ * getSalaryFor(_ as CrewMember) >> <span class="hljs-number">50_000</span>
 }
 
 when:
-def remaining = accountingService.remainingBudget()
+def amountPaid = accountingService.payCrew()
 
 then: """
-        We confirm we ask for getTotalCrewPayroll for our crew,
-        but let the impl do it's thing. When the impl calls
-        getSalaryFor, that's when our stubbing comes in
+      We confirm we ask for getTotalCrewPayroll for our crew,
+      but let the impl do it's thing. When the impl calls
+      getSalaryFor, that's when our stubbing comes in
       """
-1 * payrollService.getTotalCrewPayroll(POOL)
-remaining == 33482797
+1 * payrollService.getTotalCrewPayroll(CREW)
+amountPaid ==  <span class="hljs-number">600_000</span> // assuming crew of 12
 
                         </code></pre>
                 </section>
@@ -1239,7 +1239,10 @@ void "crew service delegates to ExternalSalaryService"() {
                         </code></pre>
                     <p style="color: rgb(63,63,63);font-size: smaller">
                         <a href="http://bit.ly/opi-spring-integration-testing-with-spock-mocks"
-                           target="_blank">Blog post</a> with more information</p>
+                           target="_blank">Blog post</a> with more information<br/>
+                        <a href="https://github.com/spockframework/spock/pull/796" target="_blank">Coming soon...</a>&nbsp;
+                        <span style="font-family: monospace">@SpringBean</span> & <span style="font-family: monospace">@SpringSpy</span>
+                    </p>
                 </section>
 
                 <section>
@@ -1399,6 +1402,12 @@ def "@PendingFeature marks data driven feature where all iterations pass as fail
                 <section>
                     <h2>Thank You</h2>
                     <img src="lib/img/spock-may-the-force-be-with-you.jpg" class="singleImage">
+                </section>
+                <section>
+                    <iframe src="http://meetspock.appspot.com/" title="iframe example 1"
+                            style="max-width: 100% !important;width: 100% !important; height: 500px !important;">
+                    </iframe>
+
                 </section>
                 <section class="id-resources-slide">
                     <h2>Resources</h2>
