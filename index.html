@@ -1329,6 +1329,22 @@ void "access network filesystem"() {
                     </ul>
                 </section>
 
+
+                <section>
+                    <h3>Problem</h3>
+                    <p class="fragment fade-out"  data-fragment-index="0">
+                        3rd party <span style="font-family: monospace">FoodReplicator</span>
+                        is creating new instances of <span style="font-family: monospace">ReplicatedFood</span>
+                    </p>
+
+                    <p class="fragment grow fade-up current-visible" data-fragment-index="0">
+                      You need to mock what <span style="font-family: monospace">ReplicatedFood#tastesLike()</span> returns
+                    </p>
+                    <p class="fragment grow fade-up current-visible">
+                        We can't mock or spy <span style="font-family: monospace">FoodReplicator</span>
+                    </p>
+                </section>
+
                 <section>
                     <h6>Using GroovyMock</h6>
                     <pre class="groovy" style="width: 100%;"><code data-trim style="font-size: 0.90em"  >
