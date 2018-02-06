@@ -13,6 +13,8 @@
 
 		<!-- OPI style -->
 		<link rel="stylesheet" href="lib/css/object-partners-revealjs-theme.css">
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:100,100i,300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
+
         <style>
 
             .reveal pre {
@@ -21,6 +23,7 @@
 
             .reveal pre code {
                 max-height: inherit;
+                overflow: visible;
             }
 
             .reveal pre.groovy code {
@@ -82,6 +85,14 @@
                 font-size: 0.8em;
             }
 
+            .hljs mark.please-no {
+                background-color: rgba(127, 159, 55, .25) !important;
+            }
+
+            .hljs mark.please-no .hljs-comment {
+                color: red !important;
+            }
+
         </style>
 
 		<!-- Printing and PDF exports -->
@@ -137,23 +148,27 @@
                     </div>
                 </section>
                 <section>
+
                     <h3>Me</h3>
                     <div>
                         <p>Derek Eskens</p>
                         <p>@snekse</p>
                     </div>
                     <div class="fragment">
-                        <p>Dev 15+ years, OPI ~3 years</p>
+                        <p>Dev 15+ years, OPI 3+ years</p>
                         <p>Java, JS, Groovy</p>
                     </div>
-
                     <p class="fragment">Star Wars > Star Trek</p>
                     <p class="fragment">'Foodie for Life' is tattooed across my tummy</p>
                 </section>
                 <section>
-                    <h3>Object Partners, Inc.</h3>
+                    <img src="lib/img/opi-map2-1024x637.png"
+                         style="border:none;opacity:0.15;z-index: -1;
+                             position:fixed;top:50%;left:50%;transform: translate(-50%, -50%);">
+
+                    <h3 style="padding-bottom: 0.5em">Object Partners, Inc.</h3>
                     <ul>
-                        <li>Java, Groovy, JavaScript, Mobile, DevOps</li>
+                        <li>JVM, JS, Mobile, Real-time Data, DevOps</li>
                         <li>~100 Senior Consultants</li>
                         <li>Omaha, Minneapolis</li>
                         <li>Average Tenure Over 5 years</li>
@@ -187,13 +202,17 @@
                 <section>
                     <img src="lib/img/spock-nodding-agrees-yeah-LOGICAL.gif" class="fullImage">
                 </section>
+                <section>
+                    <h3>Poll Question Time!</h3>
+                    <img src="lib/img/spock-raise-hand.jpg"  class="singleImage"/>
+                </section>
 				<section>
                     <h3>Why not just use JUnit?</h3>
                     <img src="lib/img/spock-kirk-amok-time-fight.png"  class="singleImage"/>
 				</section>
                 <section>
                     <h3>You could ...</h3>
-                    <img class="fragment fade-up" src="lib/img/Spock-and-Groovy-together.png" height="250px"/>
+                    <img src="lib/img/spock-and-junit-ebony-and-ivory.png" height="300px"/>
                     <h3 class="fragment fade-up">You could even...</h3>
                 </section>
                 <section>
@@ -202,7 +221,7 @@
                     <pre class="groovy" style="margin-bottom: auto" ><code data-trim  data-noescape style="font-size: 0.85em">
 class CrewRecruiterServiceSpockMockitoTest
       extends Specification implements CommonCrew {
-    //Inject Mockito mocks into your Spock tests 😱
+    //<mark class="please-no">Inject Mockito mocks into your Spock tests</mark> 😱
     @InjectMocks CrewRecruiterService crewRecruiterService
 
     @Mock PayrollService payrollService
@@ -216,7 +235,7 @@ class CrewRecruiterServiceSpockMockitoTest
                .thenReturn(100000L)
 
         when:
-        List crew = crewRecruiterService.selectForBudget(200000, CREW)
+        List crew = crewRecruiterService.selectForBudget(200000L, POOL)
 
         then: "Use 3rd party fluent assertion library"
         // AKA: crew == [KIRK, SPOCK]
@@ -249,7 +268,7 @@ public void selectForBudget() throws Exception {
   when(payrollService.getSalary(SPOCK)).thenReturn(100000L);
 
   // When selecting crew on a $200k budget
-  List&lt;CrewMember&gt; crew = crewRecruiterService.selectForBudget(200000L, ENTIRE_CREW);
+  List&lt;CrewMember&gt; crew = crewRecruiterService.selectForBudget(200000L, POOL);
                         
   // Then Kirk and Spock are the only 2 members selected, and returned in that order.
   Assert.assertEquals(new ArrayList<>(asList(KIRK, SPOCK)), crew);
@@ -275,7 +294,7 @@ void "SelectForBudget spends budget in crew priority order /
       and avoids unnecessary calls to payroll service"() {
 
     when:
-    def crew = crewRecruiterService.selectForBudget(200000, ENTIRE_CREW)
+    def crew = crewRecruiterService.selectForBudget(200000L, POOL)
 
     then:
     1 * payrollService.getSalary(KIRK) >> 100000  // first add Kirk
@@ -295,7 +314,7 @@ void "SelectForBudget spends budget in crew priority order /
       and avoids unnecessary calls to payroll service"() {
 
     when: 'We have enough to pay for Kirk and Spock'
-    def crew = crewRecruiterService.selectForBudget(200000, ENTIRE_CREW)
+    def crew = crewRecruiterService.selectForBudget(200000L, POOL)
 
     then: 'We only make our expensive external system salary calls in the order we expect'
     1 * payrollService.getSalary(KIRK) >> 100000  // first add Kirk
@@ -351,6 +370,7 @@ void "SelectForBudget spends budget in crew priority order /
                     <div style="display: flex; justify-content: center; width: 100%;">
                         <div style="flex: 1;margin-top: auto; margin-bottom: auto">
                             <h2>Spock Overview</h2>
+                            <h6>The 3 best things</h6>
                         </div>
                         <div style="flex: 1;">
                             <img src="lib/img/Best_of_Spock_cover.jpg" class="fullImage" style="position:relative; left:-75px;">
@@ -362,16 +382,20 @@ void "SelectForBudget spends budget in crew priority order /
                     <h6>Easy mocking. Easy verifications.</h6>
                     <pre class="groovy"><code data-trim style="font-size: .85em">
 def "set course test"() {
+    Route routeFromEarthToAndoria = new Route([
+        "Hang a left at Mars",
+        "Turn right at Alpha Centauri A",
+        "Gravity assist from Midos V"])
+
     when:
     Route results = navigationSystem.setCourse("Andoria")
 
     then:
-    1 * collisionAvoidanceSystems.findRoute("Earth", "Andoria") >> {
-        new Route(["Hang a left at Mars",
-                   "Turn right at Alpha Centauri A",
-                   "Gravity assist from Midos V"])
-    }
+//  ↓ verify this mock called exactly 1 time w/ these params
+    1 * mockCAS.findRoute("Earth", "Andoria") >> routeFromEarthToAndoria
+//                                            ↑ (then return) pojo route
     results.directions.first() == "Hang a left at Mars"
+
 }
                     </code></pre>
                 </section>
@@ -382,7 +406,7 @@ def "set course test"() {
 void "SelectForBudget adds crew in priority order until budget depleted"() {
 
     when: 'selecting crew at various salary cap levels'
-    def crew = crewRecruiterService.selectForBudget(salaryCap, ENTIRE_CREW)
+    def crew = crewRecruiterService.selectForBudget(salaryCap, POOL)
 
     then: 'we get back crew we can afford in priority order'
     crew == expectedCrew
@@ -392,7 +416,7 @@ void "SelectForBudget adds crew in priority order until budget depleted"() {
     0           || []
     100000      || [KIRK]
     299999      || [KIRK, SPOCK]
-    MAX_VALUE   || ENTIRE_CREW
+    MAX_VALUE   || POOL
 }
                     </code></pre>
                 </section>
@@ -408,12 +432,15 @@ void "SelectForBudget adds crew in priority order until budget depleted"() {
                                 </div>
                                 <div style="flex: 1">
                             <pre class="groovy" style="margin-right: 0; width: 120%;position:relative; left:-50px;" ><code data-trim >
+Closure filterCrewByLevel = { List crew, int rank ->
+    crew.findResults { it.rank.commandLevel < rank }
+}
+
+// ...
+
 1 * mockService.findOfficers(crewMembers) >> {
-        List crewMembers ->
-        crewMembers.findResults {
-            it.rank?.commandLevel < 5
-        }
-    }
+    filterCrewByLevel(it, 5)
+}
 
                             </code></pre>
                                     <h6 style="font-size: 0.83em">
@@ -470,11 +497,11 @@ assert KIRK != SPOCK  // == is .equals, === for references
                             <pre class="groovy" style="margin-top: 15px; left:-50px; margin-right: 0; width: 98%;"><code data-trim >
 @Subject Starship starship = new Starship()
 @Collaborator PayrollService payrollService = Mock()
-@Shared def CREW = ["Kirk", "Spock", "Ensign Redshirt"].asImmutable()
-@Collaborator def crewManager = Spy(CrewManager, constructorArgs: [CREW])
+@Shared def POOL = ["Kirk", "Spock", "Ensign Redshirt"].asImmutable()
+@Collaborator def crewManager = Spy(CrewManager, constructorArgs: [POOL])
 
 def "A very descriptive name for our test"() {
-    def currentCrew = ['RebelSpy'] + CREW  /* given: */
+    def currentCrew = ['RebelSpy'] + POOL  /* given: */
 
     expect:
     currentCrew.size() == 4
@@ -531,14 +558,15 @@ class MyFirstSpockSpec extends Specification {
                 </section>
 
                 <section>
-                    <h6>Spec fixture setup</h6>
+                    <h6 style="margin-top: 15px">Spec fixture setup</h6>
                     <pre class="groovy" style="font-size: 0.65em"><code data-trim >
 class SetupMethodsAreNotNeededSpec extends MyBaseSpecification {
-
+  // Setup methods aren't really needed
   StringUtil stringUtilOne = new StringUtil()
-  StringUtil stringUtilTwo
-
   @Shared NumberUtil numberUtilOne = new NumberUtil()
+
+  /* ----------------  But if you really want them... ----------------*/
+  StringUtil stringUtilTwo
   @Shared NumberUtil numberUtilTwo
 
   def setup() {
@@ -584,15 +612,15 @@ void testSpockIsCool() {
                     <div style="position: relative; top: -30px;">
                         <h3 style="transform: rotate(90deg);transform-origin: left bottom 0; opacity: 0.7; color: #999;
                                           text-align: left;margin-left:80px;text-indent:120px;">Method Names</h3>
-                        <h6 style="text-transform:inherit">testVulcanFindFunny() { ... }</h6>
+                        <h6 style="text-transform:inherit">testVulcanHumor() { ... }</h6>
                         <img src="lib/img/trek-kirk-spock-mad-magazine.jpg" class="singleImage">
-                        <h6 style="text-transform:inherit">"Vulcans do not get mad magazine"() { ... }</h6>
+                        <h6 style="text-transform:inherit">"Vulcans find Mad magazine humor confusing"() { ... }</h6>
                     </div>
 
                 </section>
 
                 <section style="width: 120%;left:-120px;">
-                    <h6>Self documenting code helps prevent uncomfortable conversations with your future self</h6>
+                        <h6>Self documenting code helps prevent uncomfortable conversations with your future self</h6>
                     <img src="lib/img/old-spock-to-new-spock-WHAT-WERE-YOU-THINKING.jpg" class="singleImage"
                          style="max-width: none; ">
                 </section>
@@ -642,20 +670,21 @@ void "Registering a crew member is done completely"() {
 
                 <section>
                     <h6>Assertions in Helpers</h6>
-                    <pre class="groovy" ><code data-trim style="font-size: 0.9em">
+                    <pre class="groovy" ><code data-trim data-noescape style="font-size: 0.9em">
 void "getCrew returns the expected size of valid crew members"() {
   when:
   def crew = ship.getCrew()
 
   then:
   crew.size() == 12
-  crew.each { isValidCrewMember(it) }
 
   // This would not tell you _which_ crewMember failed the assertion
-  // crew.every { crewMember.fullName?:'' != '' }
+  <span style="text-decoration: line-through">crew.every { crewMember.fullName?:'' != '' }</span>
+
+  crew.each { assertIsValidCrewMember(it) }
 }
 
-void isValidCrewMember(crewMember) {
+void assertIsValidCrewMember(crewMember) {
     assert crewMember.fullName?:'' != ''
 }
                     </code></pre>
@@ -700,17 +729,17 @@ void "SelectForBudget adds crew in priority order until budget depleted"() {
     payrollService.getSalary(_) &gt;&gt; 100000
 
     when: 'selecting crew at various salary cap levels'
-    def crew = crewRecruiterService.selectForBudget(salaryCap, ENTIRE_CREW)
+    def crew = crewRecruiterService.selectForBudget(salaryCap, POOL)
 
     then: 'we get back crew we can afford in priority order'
     crew == expectedCrew
 
-    where:
+    where: 'input of salaryCap should produce output of expectedCrew'
     salaryCap    || expectedCrew
     0            || []
     100000       || [KIRK]
     299999       || [KIRK, SPOCK]
-    MAX_VALUE    || ENTIRE_CREW
+    MAX_VALUE    || POOL
 }
                     </code></pre>
                 </section>
@@ -832,7 +861,7 @@ def "spock can maths"() {
 
                 <section>
                     <h6>Closure params!</h6>
-                    <pre class="groovy"><code data-trim style="font-size: .9em" >
+                    <pre class="groovy"><code data-trim data-noescape style="font-size: .9em" >
 when:
 command.call(start)
 
@@ -841,15 +870,15 @@ getCurrentWarpSpeed() == finalSpeed
 
 where: 'fun with closures'
 maxAwareCaptain = { speed ->
-    KIRK.say( (speed > 12) ? "Sulu, WHAT ARE YOU DOING! Slow Down!"
-                           : "Steady as she goes, Mr Sulu" )
+    KIRK.say( speed > 12 ? <span class="hljs-string">'Sulu, WHAT ARE YOU DOING! Slow Down!'</span>
+                         : <span class="hljs-string">'Steady as she goes, Mr Sulu'</span>)
 }
 
-start | command                                    | finalSpeed
-1     | { ship.command('warp 2') }                 | 2
-6     | { KIRK.say('Warp factor one, Mr. Sulu.') } | 1
-12    | maxAwareCaptain                            | 12
-13    | maxAwareCaptain                            | 12
+start | command                                    || finalSpeed
+1     | { ship.command('warp 2') }                 || 2
+6     | { KIRK.say('Warp factor one, Mr. Sulu.') } || 1
+12    | maxAwareCaptain                            || 12
+13    | maxAwareCaptain                            || 12
 
                     </code></pre>
                 </section>
@@ -879,7 +908,7 @@ Beamer beamer = Mock(Beamer)
 
 PayrollService payrollService = Spy()
 def engineControl = Spy(EngineControl)
-def crewManager = Spy(CrewManager, constructorArgs: [CREW])
+def crewManager = Spy(CrewManager, constructorArgs: [POOL])
 
 CrewMember SPOCK = h2.getCrewMember( [ lastName: 'Spock' ])
 def spockSpy = Spy(SPOCK) //New feature!
@@ -1092,22 +1121,22 @@ foodReplicator.make( {it <= 0} , _ ) >> { throw new InvalidQuantity(it[0]) }
 
                 <section>
                     <h6>Selective Mocking</h6>
-                    <pre class="groovy" ><code data-trim style="font-size: 0.98em" >
+                    <pre class="groovy" ><code data-trim data-noescape style="font-size: 0.98em" >
 def payrollService = Spy(PayrollService) {
     // Mock the pay for every crew member the same amount
-    _ * getSalaryFor(_ as CrewMember) >> 50000
+    _ * getSalaryFor(_ as CrewMember) >> <span class="hljs-number">50_000</span>
 }
 
 when:
-def remaining = accountingService.remainingBudget()
+def amountPaid = accountingService.payCrew()
 
 then: """
-        We confirm we ask for getTotalCrewPayroll for our crew,
-        but let the impl do it's thing. When the impl calls
-        getSalaryFor, that's when our stubbing comes in
+      We confirm we ask for getTotalCrewPayroll for our crew,
+      but let the impl do it's thing. When the impl calls
+      getSalaryFor, that's when our stubbing comes in
       """
 1 * payrollService.getTotalCrewPayroll(CREW)
-remaining == 33482797
+amountPaid ==  <span class="hljs-number">600_000</span> // assuming crew of 12
 
                         </code></pre>
                 </section>
@@ -1174,7 +1203,7 @@ class CrewMemberIntegrationTest extends Specification {
 
                 <section>
                     <h6>Spring Integration Testing with Spock Mocks ~ Pt 1</h6>
-                    <pre class="groovy" style="width: 100%;"><code data-trim style="font-size: 1.05em"  >
+                    <pre class="groovy" style="width: 100%;"><code data-trim data-noescape style="font-size: 1.05em"  >
 @SpringBootTest
 class CrewServiceIntegrationTest extends Specification {
 
@@ -1186,7 +1215,7 @@ class CrewServiceIntegrationTest extends Specification {
   /** Override Spring's beans with Spock mocks **/
   @TestConfiguration
   static class Config {
-    private DetachedMockFactory factory = new DetachedMockFactory()
+    private DetachedMockFactory factory = new <mark>DetachedMockFactory()</mark>
 
     @Bean
     ExternalSalaryService externalSalaryService() {
@@ -1216,7 +1245,10 @@ void "crew service delegates to ExternalSalaryService"() {
                         </code></pre>
                     <p style="color: rgb(63,63,63);font-size: smaller">
                         <a href="http://bit.ly/opi-spring-integration-testing-with-spock-mocks"
-                           target="_blank">Blog post</a> with more information</p>
+                           target="_blank">Blog post</a> with more information<br/>
+                        <a href="https://github.com/spockframework/spock/pull/796" target="_blank">Coming soon...</a>&nbsp;
+                        <span style="font-family: monospace">@SpringBean</span> & <span style="font-family: monospace">@SpringSpy</span>
+                    </p>
                 </section>
 
                 <section>
@@ -1244,7 +1276,7 @@ void "is Spock cool"() {
 
                 <section>
                     <h6>Conditional Testing</h6>
-                    <pre class="groovy"><code>
+                    <pre class="groovy"><code style="font-size: 18px;">
 @Ignore("Optional description")
 
 @IgnoreRest //Only run tests annotated w/ this
@@ -1301,6 +1333,22 @@ void "access network filesystem"() {
                         <li>constructors</li>
                         <li>static methods</li>
                     </ul>
+                </section>
+
+
+                <section>
+                    <h3>Problem</h3>
+                    <p class="fragment fade-out"  data-fragment-index="0">
+                        3rd party <span style="font-family: monospace">FoodReplicator</span>
+                        is creating new instances of <span style="font-family: monospace">ReplicatedFood</span>
+                    </p>
+
+                    <p class="fragment grow fade-up current-visible" data-fragment-index="0">
+                      You need to mock what <span style="font-family: monospace">ReplicatedFood#tastesLike()</span> returns
+                    </p>
+                    <p class="fragment grow fade-up current-visible">
+                        We can't mock or spy <span style="font-family: monospace">FoodReplicator</span>
+                    </p>
                 </section>
 
                 <section>
@@ -1373,10 +1421,6 @@ def "@PendingFeature marks data driven feature where all iterations pass as fail
                     <img src="lib/img/youn-and-old-spock-each-wtf.png" class="singleImage">
                 </section>
 
-                <section>
-                    <h2>Thank You</h2>
-                    <img src="lib/img/spock-may-the-force-be-with-you.jpg" class="singleImage">
-                </section>
                 <section class="id-resources-slide">
                     <h2>Resources</h2>
 
@@ -1406,11 +1450,21 @@ def "@PendingFeature marks data driven feature where all iterations pass as fail
                         <h6>Meta</h6>
                         <ul style="list-style: none; font-size: 1.2em">
                             <li><a href="http://bit.ly/test-often-and-prosper-slides" target="_blank">Slides
-                                <span style="padding: 0 5px"> >></span> bit.ly/ojug-toap</a></li>
+                                <span style="padding: 0 5px"> >></span> bit.ly/toap-slides</a></li>
                             <li><a href="https://github.com/snekse/test-often-and-prosper" target="_blank">Starter Project
-                                <span style="padding: 0 5px"> >></span>  bit.ly/ojug-toap-proj</a></li>
+                                <span style="padding: 0 5px"> >></span>  bit.ly/toap-proj</a></li>
                         </ul>
                     </div>
+                </section>
+                <section>
+                    <p><a href="http://meetspock.appspot.com/" target="_blank" style="font-family: monospace">meetspock.appspot.com</a></p>
+                    <p><a href="http://meetspock.appspot.com/" target="_blank">
+                        <img src="lib/img/spock-web-console.png" class="singleImageLg">
+                    </a></p>
+                </section>
+                <section>
+                    <h2>Thank You</h2>
+                    <img src="lib/img/spock-may-the-force-be-with-you.jpg" class="singleImage">
                 </section>
                 <section>
                     <h2>Credits</h2>
