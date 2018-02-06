@@ -1202,7 +1202,7 @@ class CrewMemberIntegrationTest extends Specification {
 
                 <section>
                     <h6>Spring Integration Testing with Spock Mocks ~ Pt 1</h6>
-                    <pre class="groovy" style="width: 100%;"><code data-trim style="font-size: 1.05em"  >
+                    <pre class="groovy" style="width: 100%;"><code data-trim data-noescape style="font-size: 1.05em"  >
 @SpringBootTest
 class CrewServiceIntegrationTest extends Specification {
 
@@ -1214,7 +1214,7 @@ class CrewServiceIntegrationTest extends Specification {
   /** Override Spring's beans with Spock mocks **/
   @TestConfiguration
   static class Config {
-    private DetachedMockFactory factory = new DetachedMockFactory()
+    private DetachedMockFactory factory = new <mark>DetachedMockFactory()</mark>
 
     @Bean
     ExternalSalaryService externalSalaryService() {
@@ -1275,7 +1275,7 @@ void "is Spock cool"() {
 
                 <section>
                     <h6>Conditional Testing</h6>
-                    <pre class="groovy"><code>
+                    <pre class="groovy"><code style="font-size: 18px;">
 @Ignore("Optional description")
 
 @IgnoreRest //Only run tests annotated w/ this
