@@ -269,7 +269,7 @@ public void selectForBudget() throws Exception {
 
   // When selecting crew on a $200k budget
   List&lt;CrewMember&gt; crew = crewRecruiterService.selectForBudget(200000L, POOL);
-                        
+
   // Then Kirk and Spock are the only 2 members selected, and returned in that order.
   Assert.assertEquals(new ArrayList<>(asList(KIRK, SPOCK)), crew);
 
@@ -777,12 +777,12 @@ void "Engines don't blow up if we give it a bad command"() {
 @Shared CrewManager crewMgr = new CrewManagerTestingUtil()
 static final ENTERPRISE = "USS Enterprise - NCC-1701"
 
-@Unroll("A budget of #salaryCap pays for #expectedCrew")
+@Unroll("#crewMember should be assigned to the #expectedShip")
 void "Using Shared and statics"() {
     expect:
     // ...
 
-    where:
+    where: "props defined outside test must be static"
     crewMember              || expectedShip
     crewMgr.get('Spock')    || ENTERPRISE
     crewMgr.get('Kirk')     || ENTERPRISE
